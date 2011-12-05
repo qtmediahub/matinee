@@ -34,11 +34,23 @@ Item {
         onTriggered: { root.now = new Date() }
     }
 
-    Text {
-        id: timeLabel
-        text: Qt.formatDateTime(root.now, "hh:mm:ss AP")
-        font.pointSize: 24
-        style: Text.Sunken
-        color: "white"
+    Column {
+        Text {
+            id: timeLabel
+            text: Qt.formatDateTime(root.now, "hh:mm:ss")
+            font.pixelSize: matinee.bigFont
+            style: Text.Sunken
+            color: "white"
+            anchors.right: parent.right
+        }
+
+        Text {
+            id: dateLabel
+            text: Qt.formatDateTime(root.now, "dddd dd MMM yyyy")
+            font.pixelSize: matinee.mediumFont
+            style: Text.Sunken
+            color: "silver"
+            anchors.right: parent.right
+        }
     }
 }

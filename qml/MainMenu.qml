@@ -65,7 +65,7 @@ FocusScope {
 
             Text {
                 text: delegateItem.modelData.name
-                font.pointSize: 32
+                font.pixelSize: matinee.bigFont
                 style: Text.Sunken
                 color: "white"
                 anchors.bottom: parent.bottom

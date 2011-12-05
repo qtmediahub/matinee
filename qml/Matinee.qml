@@ -19,8 +19,13 @@
 import QtQuick 1.1
 
 FocusScope {
+    id: matinee
     width: 800
     height: 480
+
+    property int bigFont: matinee.width / 25
+    property int mediumFont: matinee.width / 50
+    property int smallFont: matinee.width / 70
 
     Image {
         anchors.fill: parent
