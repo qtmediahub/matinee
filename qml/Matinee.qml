@@ -38,6 +38,15 @@ FocusScope {
         anchors.margins: 20
     }
 
+    PreviewGrid {
+        id: previewGrid
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        height: parent.height/1.5
+        width: parent.width*2
+        mediaType: mainMenu.mediaType
+    }
+
     MainMenu {
         id: mainMenu
 

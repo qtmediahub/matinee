@@ -23,13 +23,15 @@ FocusScope {
     width: 800
     height: 480
 
+    property string mediaType: mainMenuModel.get(pathView.currentIndex).mediaType
+
     ListModel {
         id: mainMenuModel
 
-        ListElement { name: "Music"; icon: "../images/folder-music.png" }
-        ListElement { name: "Images"; icon: "../images/folder-image.png" }
-        ListElement { name: "Video"; icon: "../images/folder-video.png" }
-        ListElement { name: "Radio"; icon: "../images/folder-radio.png" }
+        ListElement { name: "Music"; icon: "../images/folder-music.png"; mediaType: "music" }
+        ListElement { name: "Picture"; icon: "../images/folder-image.png"; mediaType: "picture" }
+        ListElement { name: "Video"; icon: "../images/folder-video.png"; mediaType: "video" }
+        ListElement { name: "Radio"; icon: "../images/folder-radio.png"; mediaType: "radio" }
     }
 
     PathView {
