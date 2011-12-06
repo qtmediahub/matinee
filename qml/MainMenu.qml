@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-import QtQuick 1.1
+import QtQuick 2.0
 
 FocusScope {
     id: root
@@ -33,6 +33,7 @@ FocusScope {
         ListElement { name: "Video"; icon: "../images/folder-video.png"; mediaType: "video" }
         ListElement { name: "Radio"; icon: "../images/folder-radio.png"; mediaType: "radio" }
     }
+
 
     PathView {
         id : pathView

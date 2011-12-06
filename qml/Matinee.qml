@@ -16,12 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
  */
 
-import QtQuick 1.1
+import QtQuick 2.0
 
 FocusScope {
     id: matinee
-    width: 800
-    height: 480
+    width: 1280
+    height: 720
 
     property int bigFont: matinee.width / 25
     property int mediumFont: matinee.width / 50
@@ -29,10 +29,12 @@ FocusScope {
 
     Image {
         anchors.fill: parent
-        source: "../images/stripes.png"
+        source: "../images/air.jpg"
+        smooth: true
     }
 
     Clock {
+        id: clockItem
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.margins: 20
