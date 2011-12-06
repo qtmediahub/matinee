@@ -97,8 +97,6 @@ Item {
 
                 if (coord.y < fadeMargin)
                     gl_FragColor = tex.rgba * qt_Opacity * coord.x * coord.y*(1.0/fadeMargin);
-//                else if (coord.y > (1.-fadeMargin))
-//                    gl_FragColor = tex.rgba * qt_Opacity * coord.x * (1.-coord.y)*(1.0/fadeMargin);
                 else
                     gl_FragColor = tex.rgba * qt_Opacity * coord.x;
             }
