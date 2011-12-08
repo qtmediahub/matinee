@@ -22,6 +22,8 @@ FocusScope {
     id: matinee
     width: 1280
     height: 720
+//    width: 1920
+//    height: 1080
 
     property int bigFont: matinee.width / 25
     property int mediumFont: matinee.width / 50
@@ -29,27 +31,30 @@ FocusScope {
 
     property variant activeView: root
 
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+    }
+
     function showView(view) {
-        matinee.activeView.opacity = 0
+        matinee.activeView.scale = 0
         matinee.activeView = view
-        matinee.activeView.opacity = 1
-        matinee.activeView.focus = true
+        matinee.activeView.scale = 1
+        matinee.activeView.forceActiveFocus()
     }
 
     MusicView {
         id: musicView
-        opacity: 0
         anchors.fill: parent
-
         onBack: matinee.showView(root)
     }
 
-    Item {
+    FocusScope {
         id: root
         anchors.fill: parent
         opacity: 1
 
-        Behavior on opacity {
+        Behavior on scale {
             NumberAnimation { duration: 2000 }
         }
 
