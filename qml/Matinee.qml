@@ -27,38 +27,71 @@ FocusScope {
     property int mediumFont: matinee.width / 50
     property int smallFont: matinee.width / 70
 
-    Image {
+    property variant activeView: root
+
+    function showView(view) {
+        matinee.activeView.opacity = 0
+        matinee.activeView = view
+        matinee.activeView.opacity = 1
+        matinee.activeView.focus = true
+    }
+
+    MusicView {
+        id: musicView
+        opacity: 0
         anchors.fill: parent
-        source: "../images/air.jpg"
-        smooth: true
+
+        onBack: matinee.showView(root)
     }
 
-    Clock {
-        id: clockItem
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 20
-    }
+    Item {
+        id: root
+        anchors.fill: parent
+        opacity: 1
 
-    PreviewGrid {
-        id: previewGrid
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height/1.5
-        width: parent.width*2
-        mediaType: mainMenu.mediaType
-    }
+        Behavior on opacity {
+            NumberAnimation { duration: 2000 }
+        }
 
-    MainMenu {
-        id: mainMenu
+        Image {
+            anchors.fill: parent
+            source: "../images/air.jpg"
+            smooth: true
+        }
 
-        height: 300
-        width: parent.width
-        anchors.bottom: parent.bottom
-        focus: true
-    }
+        Clock {
+            id: clockItem
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 20
+        }
 
-    Component.onCompleted: {
-        mainMenu.forceActiveFocus()
+        PreviewGrid {
+            id: previewGrid
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height/1.5
+            width: parent.width*2
+            mediaType: mainMenu.mediaType
+        }
+
+        MainMenu {
+            id: mainMenu
+
+            height: 300
+            width: parent.width
+            anchors.bottom: parent.bottom
+            focus: true
+
+            onActivateView: {
+                if (type === "music") {
+                    matinee.showView(musicView);
+                }
+            }
+        }
+
+        Component.onCompleted: {
+            mainMenu.forceActiveFocus()
+        }
     }
 }

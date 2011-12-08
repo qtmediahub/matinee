@@ -24,6 +24,7 @@ FocusScope {
     height: 480
 
     property string mediaType: mainMenuModel.get(pathView.currentIndex).mediaType
+    signal activateView(var type)
 
     ListModel {
         id: mainMenuModel
@@ -105,5 +106,6 @@ FocusScope {
 
         Keys.onRightPressed: pathView.incrementCurrentIndex();
         Keys.onLeftPressed: pathView.decrementCurrentIndex();
+        Keys.onEnterPressed: root.activateView(mainMenuModel.get(pathView.currentIndex).mediaType);
     }
 }
