@@ -24,7 +24,7 @@ FocusScope {
     id: root
     width: 800
     height: 480
-    visible: false
+    opacity: 0
 
     signal back()
 
@@ -33,7 +33,7 @@ FocusScope {
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; visible: true }
+        PropertyChanges { target: root; opacity: 1 }
     }
 
     Rectangle {
@@ -126,7 +126,7 @@ FocusScope {
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.model-1 ? root.currentIndex+1 : 0
     Keys.onEnterPressed: goIntoAnimation.start()
 
-    Behavior on scale {
+    Behavior on opacity {
         NumberAnimation { duration: 2000 }
     }
 }

@@ -25,7 +25,7 @@ FocusScope {
     id: root
     width: 800
     height: 480
-    visible: false
+    opacity: 0
 
     signal back()
 
@@ -33,19 +33,14 @@ FocusScope {
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; visible: true }
+        PropertyChanges { target: root; opacity: 1 }
     }
 
     MediaModel {
         id: musicModel
         mediaType: "music"
-        structure: "fileName"
+        structure: "artist|album|title"
     }
-
-//    Rectangle {
-//        anchors.fill: parent
-//        color: "black"
-//    }
 
     Image {
         anchors.fill: parent
@@ -80,8 +75,8 @@ FocusScope {
                     texture: model.previewUrl
                 }
 
-                x: (index%6)-5;
-                y: Math.floor(index/6)-2
+                x: (index%6)*1.1-5;
+                y: Math.floor(index/6)*1.1-2
                 z: root.currentIndex === index ? 4 : 1
 
                  Behavior on z {
@@ -108,7 +103,7 @@ FocusScope {
     Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
 
-    Behavior on scale {
+    Behavior on opacity {
         NumberAnimation { duration: 2000 }
     }
 }
