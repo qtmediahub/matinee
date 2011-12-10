@@ -58,7 +58,7 @@ FocusScope {
         }
 
         camera: Camera {
-            id: main_camera
+            id: mainCamera
             property real myScale: 0
             eye: Qt.vector3d(0, 0, 20)
             center: Qt.vector3d(0, 0, 0)
@@ -72,7 +72,8 @@ FocusScope {
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-                    texture: model.previewUrl
+                    texture: model.dotdot ? "../images/folder-music.png" : model.previewUrl
+                    blending: true
                 }
 
                 x: (index%6)*1.1-5;
@@ -100,8 +101,14 @@ FocusScope {
     }
 
     Keys.onDeletePressed: root.back()
-    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count
+    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count-1
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
+    Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
+    Keys.onDownPressed: root.currentIndex = root.currentIndex-6
+    Keys.onEnterPressed: {
+        if (musicModel.part == "artist" || musicModel.part == "album")
+            musicModel.enter(root.currentIndex)
+    }
 
     Behavior on opacity {
         NumberAnimation { duration: 2000 }

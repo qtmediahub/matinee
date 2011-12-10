@@ -122,9 +122,11 @@ FocusScope {
     }
 
     Keys.onDeletePressed: root.back()
-    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.model
-    Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.model-1 ? root.currentIndex+1 : 0
     Keys.onEnterPressed: goIntoAnimation.start()
+    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count-1
+    Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
+    Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
+    Keys.onDownPressed: root.currentIndex = root.currentIndex-6
 
     Behavior on opacity {
         NumberAnimation { duration: 2000 }
