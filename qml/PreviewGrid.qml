@@ -146,7 +146,7 @@ Item {
         height: parent.height/2
         cellHeight: height/1
         cellWidth: cellHeight
-        model: 200//previewModel
+        model: previewModel
         flow: GridView.TopToBottom
         clip: true
         interactive: false
@@ -173,8 +173,8 @@ Item {
 
             Image {
                 anchors.fill: parent
-//                source: model.previewUrl
-                source: "../images/test/" + (index % 9) + ".png"
+                source: model.previewUrl
+//                source: "../images/test/" + (index % 9) + ".png"
                 sourceSize.width: delegateImage.GridView.view.cellWidth
             }
         }

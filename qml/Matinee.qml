@@ -29,7 +29,7 @@ FocusScope {
     property int mediumFont: matinee.width / 50
     property int smallFont: matinee.width / 70
 
-    property variant activeView: root
+    property variant activeView: mainView
 
     Rectangle {
         anchors.fill: parent
@@ -37,66 +37,34 @@ FocusScope {
     }
 
     function showView(view) {
-        matinee.activeView.scale = 0
+        matinee.activeView.state = ""
         matinee.activeView = view
-        matinee.activeView.scale = 1
+        matinee.activeView.state = "active"
         matinee.activeView.forceActiveFocus()
+    }
+
+    PictureView {
+        id: pictureView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
     }
 
     MusicView {
         id: musicView
         anchors.fill: parent
-        onBack: matinee.showView(root)
+        onBack: matinee.showView(mainView)
     }
 
-    FocusScope {
-        id: root
+    MainView {
+        id: mainView
         anchors.fill: parent
-        opacity: 1
 
-        Behavior on scale {
-            NumberAnimation { duration: 2000 }
-        }
-
-        Image {
-            anchors.fill: parent
-            source: "../images/air.jpg"
-            smooth: true
-        }
-
-        Clock {
-            id: clockItem
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.margins: 20
-        }
-
-        PreviewGrid {
-            id: previewGrid
-            anchors.right: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            height: parent.height/1.5
-            width: parent.width*2
-            mediaType: mainMenu.mediaType
-        }
-
-        MainMenu {
-            id: mainMenu
-
-            height: 300
-            width: parent.width
-            anchors.bottom: parent.bottom
-            focus: true
-
-            onActivateView: {
-                if (type === "music") {
-                    matinee.showView(musicView);
-                }
+        onActivateView: {
+            if (type === "music") {
+                matinee.showView(musicView);
+            } else if (type === "picture") {
+                matinee.showView(pictureView);
             }
-        }
-
-        Component.onCompleted: {
-            mainMenu.forceActiveFocus()
         }
     }
 }

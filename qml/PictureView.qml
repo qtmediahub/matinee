@@ -19,7 +19,6 @@
 import QtQuick 2.0
 import Qt3D 1.0
 import Qt3D.Shapes 1.0
-import MediaModel 1.0
 
 FocusScope {
     id: root
@@ -30,26 +29,16 @@ FocusScope {
     signal back()
 
     property int currentIndex: 0
+    property real delegateZ: 0
 
     states: State {
         name: "active"
         PropertyChanges { target: root; visible: true }
     }
 
-    MediaModel {
-        id: musicModel
-        mediaType: "music"
-        structure: "fileName"
-    }
-
-//    Rectangle {
-//        anchors.fill: parent
-//        color: "black"
-//    }
-
-    Image {
+    Rectangle {
         anchors.fill: parent
-        source: "../images/stripes.png"
+        color: "black"
     }
 
     Viewport {
@@ -65,7 +54,7 @@ FocusScope {
         camera: Camera {
             id: main_camera
             property real myScale: 0
-            eye: Qt.vector3d(0, 0, 20)
+            eye: Qt.vector3d(10, -10, 20)
             center: Qt.vector3d(0, 0, 0)
             farPlane: 10000
             nearPlane: 5
@@ -73,40 +62,69 @@ FocusScope {
 
         Repeater {
             id: repeaterView
-            model: musicModel
+            model: 50
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-                    texture: model.previewUrl
+                    texture: "../images/test/" + (index % 9) + ".png"
                 }
 
-                x: (index%6)-5;
-                y: Math.floor(index/6)-2
-                z: root.currentIndex === index ? 4 : 1
+                x: (index%6)*1.5-7.5;
+                y: Math.floor(index/6)*1.5-2
+                z: root.delegateZ
 
-                 Behavior on z {
-                     NumberAnimation { duration: 500; easing.type: Easing.OutBack }
+                SequentialAnimation on scale {
+                    loops: Animation.Infinite
+                    running: index != root.currentIndex
+                    alwaysRunToEnd: true
+                    NumberAnimation { to: 0; duration: Math.random()*10000 }
+                    NumberAnimation { to: 1; duration: Math.random()*10000 }
+                    PauseAnimation { duration: 10000 }
+                }
+
+                NumberAnimation {
+                    running: index === root.currentIndex
+                    target: rot;
+                    loops: Animation.Infinite
+                    property: "angle";
+                    to: 360; duration: 2000
+                    alwaysRunToEnd: true
                 }
 
                 transform: Rotation3D {
                     id: rot
-                    axis: Qt.vector3d(0,1,0)
+                    axis: Qt.vector3d(1,1,1)
                     angle: 0
-
-                    NumberAnimation on angle {
-                        running: root.currentIndex === index
-                        loops: Animation.Infinite
-                        to: 360; duration: 2000
-                        alwaysRunToEnd: true
-                    }
                 }
             }
         }
     }
 
+    SequentialAnimation {
+        id: goIntoAnimation
+        alwaysRunToEnd: true
+        NumberAnimation {
+            target: root
+            property: "delegateZ"
+            to: 20
+            duration: 250
+            easing.type: Easing.InQuad
+        }
+        NumberAnimation {
+            target: root
+            property: "delegateZ"
+            from: -1000
+            to: 0
+            duration: 2000
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.2
+        }
+    }
+
     Keys.onDeletePressed: root.back()
-    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count
-    Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
+    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.model
+    Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.model-1 ? root.currentIndex+1 : 0
+    Keys.onEnterPressed: goIntoAnimation.start()
 
     Behavior on scale {
         NumberAnimation { duration: 2000 }
