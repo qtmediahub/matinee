@@ -72,7 +72,11 @@ FocusScope {
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-                    texture: model.dotdot ? "../images/folder-music.png" : model.previewUrl
+                    texture: {
+                        if (model.dotdot) return "../images/folder-music.png"
+                        else if (model.previewUrl == "" ) return "../images/default-media.png"
+                        else return model.previewUrl
+                    }
                     blending: true
                 }
 
@@ -92,7 +96,7 @@ FocusScope {
                     NumberAnimation on angle {
                         running: root.currentIndex === index
                         loops: Animation.Infinite
-                        to: 360; duration: 2000
+                        from: 0; to: 360; duration: 2000
                         alwaysRunToEnd: true
                     }
                 }

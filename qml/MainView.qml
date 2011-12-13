@@ -33,7 +33,7 @@ FocusScope {
         angle: -45
 
         Behavior on angle {
-            NumberAnimation { duration: 2000 }
+            NumberAnimation { duration: 1000 }
         }
     }
 
