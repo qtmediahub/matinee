@@ -165,12 +165,6 @@ Item {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
 
-            Rectangle {
-                anchors.fill: parent
-                color: "black"
-                opacity: 0.4
-            }
-
             Image {
                 anchors.fill: parent
                 source: model.previewUrl
