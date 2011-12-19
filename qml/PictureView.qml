@@ -19,6 +19,7 @@
 import QtQuick 2.0
 import Qt3D 1.0
 import Qt3D.Shapes 1.0
+import MediaModel 1.0
 
 FocusScope {
     id: root
@@ -36,9 +37,15 @@ FocusScope {
         PropertyChanges { target: root; opacity: 1 }
     }
 
-    Rectangle {
+    MediaModel {
+        id: pictureModel
+        mediaType: "picture"
+        structure: "year|month|fileName"
+    }
+
+    Image {
         anchors.fill: parent
-        color: "black"
+        source: "../images/air.jpg"
     }
 
     Viewport {
@@ -52,9 +59,9 @@ FocusScope {
         }
 
         camera: Camera {
-            id: main_camera
+            id: mainCamera
             property real myScale: 0
-            eye: Qt.vector3d(10, -10, 20)
+            eye: Qt.vector3d(0, 0, 20)
             center: Qt.vector3d(0, 0, 0)
             farPlane: 10000
             nearPlane: 5
@@ -62,39 +69,36 @@ FocusScope {
 
         Repeater {
             id: repeaterView
-            model: 50
+            model: pictureModel
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-                    texture: "../images/test/" + (index % 9) + ".png"
+                    texture: {
+                        if (model.dotdot) return "../images/folder-music.png"
+                        else if (model.previewUrl == "" ) return "../images/default-media.png"
+                        else return model.previewUrl
+                    }
+                    blending: true
                 }
 
-                x: (index%6)*1.5-7.5;
-                y: Math.floor(index/6)*1.5-2
-                z: root.delegateZ
+                x: (index%6)*1.1-3;
+                y: Math.floor(index/6)*1.1-2
+                z: root.currentIndex === index ? 4 : 1
 
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    running: index != root.currentIndex
-                    alwaysRunToEnd: true
-                    NumberAnimation { to: 0; duration: Math.random()*10000 }
-                    NumberAnimation { to: 1; duration: Math.random()*10000 }
-                    PauseAnimation { duration: 10000 }
-                }
-
-                NumberAnimation {
-                    running: index === root.currentIndex
-                    target: rot;
-                    loops: Animation.Infinite
-                    property: "angle";
-                    to: 360; duration: 2000
-                    alwaysRunToEnd: true
+                 Behavior on z {
+                     NumberAnimation { duration: 500; easing.type: Easing.OutBack }
                 }
 
                 transform: Rotation3D {
-                    id: rot
-                    axis: Qt.vector3d(1,1,1)
+                    axis: Qt.vector3d(0,1,0)
                     angle: 0
+
+                    NumberAnimation on angle {
+                        running: root.currentIndex == index
+                        loops: Animation.Infinite
+                        from: 0; to: 360; duration: 2000
+                        alwaysRunToEnd: true
+                    }
                 }
             }
         }

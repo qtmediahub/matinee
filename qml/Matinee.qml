@@ -49,12 +49,6 @@ FocusScope {
         onBack: matinee.showView(mainView)
     }
 
-    MusicView {
-        id: musicView
-        anchors.fill: parent
-        onBack: matinee.showView(mainView)
-    }
-
     MainView {
         id: mainView
         anchors.fill: parent
@@ -67,4 +61,11 @@ FocusScope {
             }
         }
     }
+
+    MusicView {
+        id: musicView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
+
 }

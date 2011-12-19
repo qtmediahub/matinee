@@ -46,7 +46,7 @@ FocusScope {
         dragMargin: width
         focus: true
         pathItemCount: 4
-        highlightMoveDuration: 1000
+        highlightMoveDuration: 500
 
         delegate: Item {
             id: delegateItem

@@ -42,15 +42,18 @@ FocusScope {
         structure: "artist|album|title"
     }
 
-    Image {
+    Rectangle {
         anchors.fill: parent
-        source: "../images/stripes.png"
+        color: "black"
+    }
+
+    MusicParticles {
+        anchors.fill: parent
     }
 
     Viewport {
         id: viewport
-        width: parent.width
-        height: parent.height
+        anchors.fill: parent
         navigation: false
 
         light: Light {
@@ -69,7 +72,7 @@ FocusScope {
         Repeater {
             id: repeaterView
             model: musicModel
-            delegate: Cube {
+            delegate: Quad {
                 id: viewDelegate
                 effect: Effect {
                     texture: {
@@ -80,7 +83,7 @@ FocusScope {
                     blending: true
                 }
 
-                x: (index%6)*1.1-5;
+                x: (index%6)*1.1-3;
                 y: Math.floor(index/6)*1.1-2
                 z: root.currentIndex === index ? 4 : 1
 
@@ -90,13 +93,13 @@ FocusScope {
 
                 transform: Rotation3D {
                     id: rot
-                    axis: Qt.vector3d(0,1,0)
+                    axis: Qt.vector3d(0,1,1)
                     angle: 0
 
                     NumberAnimation on angle {
-                        running: root.currentIndex === index
+                        running: true
                         loops: Animation.Infinite
-                        from: 0; to: 360; duration: 2000
+                        from: 0; to: 360; duration: 2000*index
                         alwaysRunToEnd: true
                     }
                 }

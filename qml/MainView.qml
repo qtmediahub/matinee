@@ -23,6 +23,7 @@ FocusScope {
     anchors.fill: parent
     clip: true
     state: "active"
+    scale: 0.8
 
     signal activateView(var type)
 
@@ -31,10 +32,6 @@ FocusScope {
         axis { x: 0; y: 1; z: 0 }
         origin { x: root.width; y: root.height/2 }
         angle: -45
-
-        Behavior on angle {
-            NumberAnimation { duration: 1000 }
-        }
     }
 
     states: State {
@@ -43,11 +40,24 @@ FocusScope {
             target: rootRot
             angle: 0
         }
+        PropertyChanges {
+            target: root
+            scale: 1
+        }
     }
 
-    Behavior on scale {
-        NumberAnimation { duration: 2000 }
-    }
+    transitions: [
+        Transition {
+            from: "active"
+            NumberAnimation { property: "scale"; duration: 600; easing.type: Easing.OutQuad }
+            NumberAnimation { property: "angle"; duration: 300; easing.type: Easing.OutQuad }
+        },
+        Transition {
+            from: ""
+            NumberAnimation { property: "scale"; duration: 1200; easing.type: Easing.OutQuad }
+            NumberAnimation { property: "angle"; duration: 600; easing.type: Easing.OutQuad }
+        }
+    ]
 
     Image {
         anchors.fill: parent
