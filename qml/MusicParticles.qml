@@ -253,5 +253,4 @@ Rectangle {
             NumberAnimation { from: 0.0; to: 1 ; duration: 1000; }
         }
     }
-
 }

@@ -51,59 +51,57 @@ FocusScope {
         anchors.fill: parent
     }
 
-    Viewport {
-        id: viewport
+    Grid {
+        id: myGrid
         anchors.fill: parent
-        navigation: false
-
-        light: Light {
-            ambientColor: "white"
-        }
-
-        camera: Camera {
-            id: mainCamera
-            property real myScale: 0
-            eye: Qt.vector3d(0, 0, 20)
-            center: Qt.vector3d(0, 0, 0)
-            farPlane: 10000
-            nearPlane: 5
-        }
 
         Repeater {
             id: repeaterView
             model: musicModel
-            delegate: Quad {
+            delegate: Image {
                 id: viewDelegate
-                effect: Effect {
-                    texture: {
-                        if (model.dotdot) return "../images/folder-music.png"
-                        else if (model.previewUrl == "" ) return "../images/default-media.png"
-                        else return model.previewUrl
-                    }
-                    blending: true
+                opacity: 0.7
+                source: {
+                    if (model.dotdot) return "../images/folder-music.png"
+                    else if (model.previewUrl == "" ) return "../images/default-media.png"
+                    else return model.previewUrl
                 }
 
-                x: (index%6)*1.1-3;
-                y: Math.floor(index/6)*1.1-2
-                z: root.currentIndex === index ? 4 : 1
-
-                 Behavior on z {
-                     NumberAnimation { duration: 500; easing.type: Easing.OutBack }
-                }
-
-                transform: Rotation3D {
+                transform: Rotation {
                     id: rot
-                    axis: Qt.vector3d(0,1,1)
+                    axis { x: 1; y: 1; z: 1 }
                     angle: 0
+                    origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
 
                     NumberAnimation on angle {
                         running: true
                         loops: Animation.Infinite
-                        from: 0; to: 360; duration: 2000*index
+                        from: 0; to: 360; duration: 2000*(1+index)
                         alwaysRunToEnd: true
                     }
                 }
             }
+        }
+    }
+
+    SequentialAnimation {
+        id: goIntoAnimation
+        alwaysRunToEnd: true
+        NumberAnimation {
+            target: myGrid
+            property: "scale"
+            to: 20
+            duration: 250
+            easing.type: Easing.InQuad
+        }
+        NumberAnimation {
+            target: myGrid
+            property: "scale"
+            from: 0
+            to: 1
+            duration: 4000
+            easing.type: Easing.OutBack
+            easing.overshoot: 0.2
         }
     }
 
@@ -113,8 +111,9 @@ FocusScope {
     Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
     Keys.onDownPressed: root.currentIndex = root.currentIndex-6
     Keys.onEnterPressed: {
-        if (musicModel.part == "artist" || musicModel.part == "album")
-            musicModel.enter(root.currentIndex)
+        goIntoAnimation.restart()
+//        if (musicModel.part == "artist" || musicModel.part == "album")
+//            musicModel.enter(root.currentIndex)
     }
 
     Behavior on opacity {

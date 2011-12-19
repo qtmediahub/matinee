@@ -17,6 +17,7 @@
  */
 
 import QtQuick 2.0
+import QtQuick.Particles 2.0
 
 FocusScope {
     id: root
@@ -65,13 +66,6 @@ FocusScope {
         smooth: true
     }
 
-    Clock {
-        id: clockItem
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 20
-    }
-
     PreviewGrid {
         id: previewGrid
         anchors.right: parent.right
@@ -80,6 +74,66 @@ FocusScope {
         width: parent.width*2
         mediaType: mainMenu.mediaType
     }
+
+    Emitter {
+        system: particleSystem
+
+        ParticleSystem {
+            id: particleSystem
+
+            ImageParticle {
+                system: particleSystem
+                alpha: 0
+                source: "../images/particle_circle_2.png"
+            }
+        }
+
+        emitRate: 0.1
+        lifeSpan: 40000
+
+        y: parent.height
+        x: 0
+        width: parent.width
+
+        speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
+        speedFromMovement: 8
+        size: 40
+        sizeVariation: 20
+    }
+
+    Emitter {
+        system: particleSystem2
+
+        ParticleSystem {
+            id: particleSystem2
+
+            ImageParticle {
+                system: particleSystem2
+                alpha: 0
+                source: "../images/particle_circle_3.png"
+            }
+        }
+
+        emitRate: 0.1
+        lifeSpan: 40000
+
+        y: parent.height
+        x: 0
+        width: parent.width
+
+        speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
+        speedFromMovement: 8
+        size: 40
+        sizeVariation: 20
+    }
+
+    Clock {
+        id: clockItem
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: 20
+    }
+
 
     MainMenu {
         id: mainMenu

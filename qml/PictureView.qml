@@ -46,6 +46,7 @@ FocusScope {
     Image {
         anchors.fill: parent
         source: "../images/air.jpg"
+        smooth: true
     }
 
     Viewport {
