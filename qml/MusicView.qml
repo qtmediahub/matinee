@@ -30,6 +30,7 @@ FocusScope {
     signal back()
 
     property int currentIndex: 0
+    property int columns: 7
 
     states: State {
         name: "active"
@@ -51,7 +52,7 @@ FocusScope {
         anchors.fill: parent
     }
 
-    Grid {
+    Item {
         id: myGrid
         anchors.fill: parent
 
@@ -60,25 +61,46 @@ FocusScope {
             model: musicModel
             delegate: Image {
                 id: viewDelegate
-                opacity: 0.7
                 source: {
                     if (model.dotdot) return "../images/folder-music.png"
                     else if (model.previewUrl == "" ) return "../images/default-media.png"
                     else return model.previewUrl
                 }
 
+                x: (index%root.columns)*width
+                y: Math.floor(index/root.columns)*width
+
+                width: 256
+                height: width
+
+                smooth: true
+
+                opacity: index === root.currentIndex ? 1 : 0.6
+                scale: index === root.currentIndex ? 1.5 : 1
+
                 transform: Rotation {
                     id: rot
-                    axis { x: 1; y: 1; z: 1 }
-                    angle: 0
+                    axis { x: 1; y: 0; z: 0 }
+                    angle: index === root.currentIndex ? 360 : 0
                     origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
 
-                    NumberAnimation on angle {
-                        running: true
-                        loops: Animation.Infinite
-                        from: 0; to: 360; duration: 2000*(1+index)
-                        alwaysRunToEnd: true
+//                    NumberAnimation on angle {
+//                        running: index === root.currentIndex
+//                        loops: Animation.Infinite
+//                        from: 0; to: 360; duration: 2000
+//                        alwaysRunToEnd: true
+//                    }
+                    Behavior on angle {
+                        NumberAnimation { duration: 1000 }
                     }
+                }
+
+                Behavior on opacity {
+                    NumberAnimation {}
+                }
+
+                Behavior on scale {
+                    NumberAnimation { duration: 1000 }
                 }
             }
         }
@@ -108,8 +130,8 @@ FocusScope {
     Keys.onDeletePressed: root.back()
     Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count-1
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
-    Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
-    Keys.onDownPressed: root.currentIndex = root.currentIndex-6
+    Keys.onDownPressed: root.currentIndex = (root.currentIndex/root.columns) < repeaterView.count/root.columns-1 ? root.currentIndex+root.columns : root.currentIndex%root.columns
+    Keys.onUpPressed: root.currentIndex = root.currentIndex-root.columns
     Keys.onEnterPressed: {
         goIntoAnimation.restart()
 //        if (musicModel.part == "artist" || musicModel.part == "album")

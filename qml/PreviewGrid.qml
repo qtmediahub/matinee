@@ -40,12 +40,17 @@ Item {
 
         Behavior on mediaType {
             SequentialAnimation {
-                PropertyAction { target: scrollerAnimation; property: "running"; value: false}
-                NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
-                PropertyAction {}
+                ParallelAnimation {
+                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
+                    NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
+                }
+
+                PropertyAction { target: previewModel; property: "mediaType"}
                 PauseAnimation { duration: 500 }
-                NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
-                PropertyAction { target: scrollerAnimation; property: "running"; value: true}
+                ParallelAnimation {
+                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
+                    NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
+                }
             }
         }
     }
@@ -64,7 +69,16 @@ Item {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
 
+        transform: Scale {
+            origin.x: parent.width
+            origin.y: parent.height/2
+            xScale: 2
+            yScale: 1
+        }
+
         property real fadeMargin: 0.2
+        property real fadeMarginX: 0
+        property variant src: theSource
 
         SequentialAnimation on fadeMargin {
             running: true
@@ -73,13 +87,12 @@ Item {
             NumberAnimation { to: 0.2; duration: 4000; easing.type: Easing.OutQuad }
         }
 
-        property variant src: theSource
-
         vertexShader: "
-            uniform highp mat4 qt_Matrix;
-            attribute highp vec4 qt_Vertex;
-            attribute highp vec2 qt_MultiTexCoord0;
-            varying highp vec2 coord;
+            uniform lowp mat4 qt_Matrix;
+            attribute lowp vec4 qt_Vertex;
+            attribute lowp vec2 qt_MultiTexCoord0;
+            varying lowp vec2 coord;
+
             void main() {
                 coord = qt_MultiTexCoord0;
                 gl_Position = qt_Matrix * qt_Vertex;
@@ -87,18 +100,23 @@ Item {
         "
 
         fragmentShader: "
-            varying highp vec2 coord;
+            varying lowp vec2 coord;
             uniform sampler2D src;
             uniform lowp float qt_Opacity;
             uniform lowp float fadeMargin;
+            uniform lowp float fadeMarginX;
 
             void main() {
                 lowp vec4 tex = texture2D(src, coord);
+                lowp vec4 color;
 
                 if (coord.y < fadeMargin)
-                    gl_FragColor = tex.rgba * qt_Opacity * coord.x * coord.y*(1.0/fadeMargin);
+                    color = tex.rgba * qt_Opacity * coord.y*(1.0/fadeMargin);
                 else
-                    gl_FragColor = tex.rgba * qt_Opacity * coord.x;
+                    color = tex.rgba * qt_Opacity;
+
+                color = color + (1. - abs(coord.x - fadeMarginX));
+                gl_FragColor = color * coord.x;
             }
         "
     }
@@ -114,6 +132,13 @@ Item {
         height: theSource2.sourceItem.height/2.0
         anchors.right: parent.right
         anchors.top: shaderEffect1.bottom
+
+        transform: Scale {
+            origin.x: parent.width
+            origin.y: parent.height/2
+            xScale: 2
+            yScale: 1
+        }
 
         property variant src: theSource2
         property real alpha: 0.3
