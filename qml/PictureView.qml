@@ -54,7 +54,6 @@ FocusScope {
         width: parent.width
         height: parent.height
         navigation: false
-//        renderMode: Viewport.DirectRender
 
         light: Light {
             ambientColor: "white"
