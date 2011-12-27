@@ -30,6 +30,7 @@ FocusScope {
     signal back()
 
     property int currentIndex: 0
+    property bool currentIndexSelected: false
     property int columns: 7
 
     states: State {
@@ -40,7 +41,7 @@ FocusScope {
     MediaModel {
         id: musicModel
         mediaType: "music"
-        structure: "artist|album|title"
+        structure: "artist|title"
     }
 
     Rectangle {
@@ -59,71 +60,113 @@ FocusScope {
         Repeater {
             id: repeaterView
             model: musicModel
-            delegate: Image {
+            delegate:  Item {
                 id: viewDelegate
-                source: {
-                    if (model.dotdot) return "../images/folder-music.png"
-                    else if (model.previewUrl == "" ) return "../images/default-media.png"
-                    else return model.previewUrl
-                }
+
+                property real swing: 0
 
                 x: (index%root.columns)*width
                 y: Math.floor(index/root.columns)*width
-
                 width: 256
                 height: width
-
                 smooth: true
+                opacity: 0.4
+                scale: 1
+                z: 0
+                state: root.currentIndex === index ? (root.currentIndexSelected ? "active" : "selected") : ""
 
-                opacity: index === root.currentIndex ? 1 : 0.6
-                scale: index === root.currentIndex ? 1.5 : 1
+                states: [
+                    State {
+                        name: "selected"
+                        PropertyChanges {
+                            target: viewDelegate
+                            swing: 0
+                            scale: 1.5
+                            opacity: 1
+                            z: 2
+                        }
+                        PropertyChanges {
+                            target: viewDelegateRotation
+                            angle: 360
+                        }
+                    },
+                    State {
+                        name: "active"
+                        PropertyChanges {
+                            target: viewDelegate
+                            swing: 120
+                            scale: 2
+                            opacity: 1
+                            x: root.width/2 - viewDelegate.width/2
+                            y: root.height/2 - viewDelegate.height/2
+                            z: 2
+                        }
+                        PropertyChanges {
+                            target: viewDelegateRotation
+                            angle: 360
+                        }
+                    }
+                ]
 
-                transform: Rotation {
-                    id: rot
-                    axis { x: 1; y: 0; z: 0 }
-                    angle: index === root.currentIndex ? 360 : 0
-                    origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                transitions: [
+                    Transition {
+                        NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 1000; }
+                    }
+                ]
 
-//                    NumberAnimation on angle {
-//                        running: index === root.currentIndex
-//                        loops: Animation.Infinite
-//                        from: 0; to: 360; duration: 2000
-//                        alwaysRunToEnd: true
-//                    }
-                    Behavior on angle {
-                        NumberAnimation { duration: 1000 }
+                Rectangle {
+                    id: discContent
+                    color: "black"
+                    anchors.fill: parent
+
+                    Image {
+                        source: "../images/media-optical.png"
+                        anchors.fill: parent
+                        smooth: true
+
+                        Text {
+                            id: discContentTitle
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 40
+                            text: model.artist
+                            color: "lightsteelblue"
+                        }
                     }
                 }
 
-                Behavior on opacity {
-                    NumberAnimation {}
+                Rectangle {
+                    id: discCover
+                    color: "black"
+                    anchors.fill: parent
+
+                    transform: [
+                        Rotation {
+                            axis { x: 0; y: 1; z: 0 }
+                            angle: viewDelegate.swing
+                            origin { x: viewDelegate.width; y: viewDelegate.height/2; }
+                        }
+                    ]
+
+                    Image {
+                        anchors.fill: parent
+                        source: {
+                            if (model.dotdot) return "../images/folder-music.png"
+                            else if (model.previewUrl == "" ) return ""
+                            else return model.previewUrl
+                        }
+                    }
                 }
 
-                Behavior on scale {
-                    NumberAnimation { duration: 1000 }
-                }
+                transform: [
+                    Rotation {
+                        id: viewDelegateRotation
+                        axis { x: 1; y: 0; z: 0 }
+                        angle: 0
+                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                    }
+                ]
             }
-        }
-    }
-
-    SequentialAnimation {
-        id: goIntoAnimation
-        alwaysRunToEnd: true
-        NumberAnimation {
-            target: myGrid
-            property: "scale"
-            to: 20
-            duration: 250
-            easing.type: Easing.InQuad
-        }
-        NumberAnimation {
-            target: myGrid
-            property: "scale"
-            from: 0
-            to: 1
-            duration: 4000
-            easing.type: Easing.OutBack
-            easing.overshoot: 0.2
         }
     }
 
@@ -133,9 +176,11 @@ FocusScope {
     Keys.onDownPressed: root.currentIndex = (root.currentIndex/root.columns) < repeaterView.count/root.columns-1 ? root.currentIndex+root.columns : root.currentIndex%root.columns
     Keys.onUpPressed: root.currentIndex = root.currentIndex-root.columns
     Keys.onEnterPressed: {
-        goIntoAnimation.restart()
-//        if (musicModel.part == "artist" || musicModel.part == "album")
-//            musicModel.enter(root.currentIndex)
+        if (root.currentIndexSelected) {
+            root.currentIndexSelected = false
+        } else {
+            root.currentIndexSelected = true
+        }
     }
 
     Behavior on opacity {

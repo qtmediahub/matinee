@@ -54,6 +54,7 @@ FocusScope {
         width: parent.width
         height: parent.height
         navigation: false
+//        renderMode: Viewport.DirectRender
 
         light: Light {
             ambientColor: "white"
@@ -74,11 +75,12 @@ FocusScope {
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-                    texture: {
-                        if (model.dotdot) return "../images/folder-music.png"
-                        else if (model.previewUrl == "" ) return "../images/default-media.png"
-                        else return model.previewUrl
-                    }
+//                    texture: {
+//                        if (model.dotdot) return "../images/folder-music.png"
+//                        else if (model.previewUrl == "" ) return "../images/default-media.png"
+//                        else return model.previewUrl
+//                    }
+                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 1)
                     blending: true
                 }
 
