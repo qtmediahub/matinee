@@ -124,7 +124,7 @@ FocusScope {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
 //            source: model.previewUrl
-            source: "../images/test/" + index%9 + ".png"
+            source: "../images/test/" + index%14 + ".png"
             scale: GridView.isCurrentItem ? 1.5 : 1.0
             z: GridView.isCurrentItem ? 2 : 1
 
