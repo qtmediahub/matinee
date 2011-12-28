@@ -27,9 +27,6 @@ FocusScope {
 
     signal back()
 
-    property int currentIndex: 0
-    property real delegateZ: 0
-
     states: State {
         name: "active"
         PropertyChanges { target: root; opacity: 1 }
@@ -59,7 +56,7 @@ FocusScope {
         height: theSource.sourceItem.height
         anchors.centerIn: parent
 
-        mesh: GridMesh { resolution: Qt.size(200, 10) }
+        mesh: GridMesh { resolution: Qt.size(50, 10) }
 
         property variant src: theSource
 
@@ -118,15 +115,30 @@ FocusScope {
         model: 200
         cellHeight: 128
         cellWidth: 128
+        currentIndex: 0
+        highlightRangeMode: GridView.StrictlyEnforceRange
+        preferredHighlightBegin: height/2
+        preferredHighlightEnd: height/2
+        highlightMoveDuration: 1000
         delegate: Image {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
 //            source: model.previewUrl
             source: "../images/test/" + index%9 + ".png"
+            scale: GridView.isCurrentItem ? 1.5 : 1.0
+            z: GridView.isCurrentItem ? 2 : 1
+
+            Behavior on scale {
+                NumberAnimation {}
+            }
         }
     }
 
     Keys.onDeletePressed: root.back()
+    Keys.onLeftPressed: gridView.moveCurrentIndexLeft()
+    Keys.onRightPressed: gridView.moveCurrentIndexRight()
+    Keys.onUpPressed: gridView.moveCurrentIndexUp()
+    Keys.onDownPressed: gridView.moveCurrentIndexDown()
 
     Behavior on opacity {
         NumberAnimation { duration: 2000 }
