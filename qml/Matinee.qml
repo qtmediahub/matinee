@@ -37,7 +37,12 @@ FocusScope {
     }
 
     function showView(view) {
-        matinee.activeView.state = ""
+        if (view === videoView) {
+            matinee.activeView.state = "inactive2"
+        } else {
+            print("make view ''")
+            matinee.activeView.state = ""
+        }
         matinee.activeView = view
         matinee.activeView.state = "active"
         matinee.activeView.forceActiveFocus()
@@ -45,6 +50,12 @@ FocusScope {
 
     PictureView {
         id: pictureView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
+
+    VideoView {
+        id: videoView
         anchors.fill: parent
         onBack: matinee.showView(mainView)
     }
@@ -58,6 +69,8 @@ FocusScope {
                 matinee.showView(musicView);
             } else if (type === "picture") {
                 matinee.showView(pictureView);
+            } else if (type === "video") {
+                matinee.showView(videoView);
             }
         }
     }
@@ -67,5 +80,4 @@ FocusScope {
         anchors.fill: parent
         onBack: matinee.showView(mainView)
     }
-
 }

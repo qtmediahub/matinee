@@ -29,24 +29,49 @@ FocusScope {
 
     signal activateView(var type)
 
-    transform: Rotation {
-        id: rootRot
-        axis { x: 0; y: 1; z: 0 }
-        origin { x: root.width; y: root.height/2 }
-        angle: -45
-    }
-
-    states: State {
-        name: "active"
-        PropertyChanges {
-            target: rootRot
+    transform: [
+        Rotation {
+            id: rootRot
+            axis { x: 0; y: 1; z: 0 }
+            origin { x: root.width; y: root.height/2 }
+            angle: -45
+        },
+        Rotation {
+            id: rootRot2
+            axis { x: 1; y: 0; z: 0 }
+            origin { x: root.width/2; y: root.height }
             angle: 0
         }
-        PropertyChanges {
-            target: root
-            scale: 1
+    ]
+
+    states: [
+        State {
+            name: "active"
+            PropertyChanges {
+                target: rootRot
+                angle: 0
+            }
+            PropertyChanges {
+                target: root
+                scale: 1
+            }
+        },
+        State {
+            name: "inactive2"
+            PropertyChanges {
+                target: rootRot2
+                angle: 50
+            }
+            PropertyChanges {
+                target: root
+                scale: 0.8
+            }
+            PropertyChanges {
+                target: rootRot
+                angle: 0
+            }
         }
-    }
+    ]
 
     transitions: [
         Transition {
@@ -55,7 +80,6 @@ FocusScope {
             NumberAnimation { property: "angle"; duration: 300; easing.type: Easing.OutQuad }
         },
         Transition {
-            from: ""
             NumberAnimation { property: "scale"; duration: 1200; easing.type: Easing.OutQuad }
             NumberAnimation { property: "angle"; duration: 600; easing.type: Easing.OutQuad }
         }
