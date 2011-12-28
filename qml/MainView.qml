@@ -18,6 +18,7 @@
 
 import QtQuick 2.0
 import QtQuick.Particles 2.0
+import IpAddressFinder 1.0
 
 FocusScope {
     id: root
@@ -134,7 +135,6 @@ FocusScope {
         anchors.margins: 20
     }
 
-
     MainMenu {
         id: mainMenu
 
@@ -145,6 +145,17 @@ FocusScope {
 
         onActivateView: root.activateView(type)
     }
+
+    Text {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        text: ipAddressFinder.ipAddresses[0]
+
+        IpAddressFinder {
+            id: ipAddressFinder
+        }
+    }
+
 
     Component.onCompleted: {
         mainMenu.forceActiveFocus()
