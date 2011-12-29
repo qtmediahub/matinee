@@ -99,7 +99,7 @@ FocusScope {
             NumberAnimation { property: "factor"; duration: 1000; easing.type: Easing.OutQuad }
             NumberAnimation { property: "scale"; duration: 1200; easing.type: Easing.OutQuad }
             NumberAnimation { property: "angle"; duration: 600; easing.type: Easing.OutQuad }
-            NumberAnimation { property: "opacity"; duration: 1000; easing.type: Easing.OutQuad }
+            NumberAnimation { property: "opacity"; duration: 800; easing.type: Easing.OutQuad }
         }
     ]
 

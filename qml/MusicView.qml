@@ -31,17 +31,33 @@ FocusScope {
 
     property int currentIndex: 0
     property bool currentIndexSelected: false
-    property int columns: 7
+    property int columns: 3
 
     states: State {
         name: "active"
         PropertyChanges { target: root; opacity: 1 }
     }
 
-    MediaModel {
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "opacity"; duration: 800; }
+        }
+    ]
+
+//    MediaModel {
+//        id: musicModel
+//        mediaType: "music"
+//        structure: "artist|title"
+//    }
+
+    ListModel {
         id: musicModel
-        mediaType: "music"
-        structure: "artist|title"
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
     }
 
     Rectangle {
@@ -49,13 +65,19 @@ FocusScope {
         color: "black"
     }
 
-//    MusicParticles {
-//        anchors.fill: parent
-//    }
+    Image {
+        anchors.fill: parent
+        source: "../images/stripes.png"
+    }
 
     Item {
         id: myGrid
-        anchors.fill: parent
+        anchors.centerIn: parent
+        width: root.columns * (cellSize+spacing)
+        height: (Math.floor(repeaterView.count/root.columns)) * (cellSize+spacing)
+
+        property int spacing: 20
+        property int cellSize: 256
 
         Repeater {
             id: repeaterView
@@ -65,10 +87,10 @@ FocusScope {
 
                 property real swing: 0
 
-                x: (index%root.columns)*width
-                y: Math.floor(index/root.columns)*width
-                width: 256
-                height: width
+                x: (index%root.columns)*(myGrid.cellSize+myGrid.spacing)
+                y: Math.floor(index/root.columns)*(myGrid.cellSize+myGrid.spacing)
+                width: myGrid.cellSize
+                height: myGrid.cellSize
                 smooth: true
                 opacity: 0.4
                 scale: 1
@@ -97,8 +119,8 @@ FocusScope {
                             swing: 120
                             scale: 2
                             opacity: 1
-                            x: root.width/2 - viewDelegate.width/2
-                            y: root.height/2 - viewDelegate.height/2
+                            x: myGrid.width/2 - viewDelegate.width/2
+                            y: myGrid.height/2 - viewDelegate.height/2
                             z: 2
                         }
                         PropertyChanges {
@@ -116,7 +138,7 @@ FocusScope {
 
                 Rectangle {
                     id: discContent
-                    color: "black"
+                    color: "#111111"
                     anchors.fill: parent
 
                     Image {
@@ -135,10 +157,14 @@ FocusScope {
                     }
                 }
 
-                Rectangle {
+                Item {
                     id: discCover
-                    color: "black"
                     anchors.fill: parent
+
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#222222"
+                    }
 
                     transform: [
                         Rotation {
@@ -149,12 +175,23 @@ FocusScope {
                     ]
 
                     Image {
+                        id: discCoverImage
                         anchors.fill: parent
+                        anchors.margins: 10
+                        smooth: true
                         source: {
                             if (model.dotdot) return "../images/folder-music.png"
                             else if (model.previewUrl == "" ) return ""
                             else return model.previewUrl
                         }
+
+                        transform: [
+                            Rotation {
+                                axis { x: 0; y: 1; z: 0 }
+                                angle: viewDelegate.swing < 90 ? 0 : 180
+                                origin { x: discCoverImage.width/2; y: discCoverImage.height/2; }
+                            }
+                        ]
                     }
                 }
 
@@ -181,9 +218,5 @@ FocusScope {
         } else {
             root.currentIndexSelected = true
         }
-    }
-
-    Behavior on opacity {
-        NumberAnimation { duration: 2000 }
     }
 }
