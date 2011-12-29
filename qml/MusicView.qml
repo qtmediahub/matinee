@@ -49,9 +49,9 @@ FocusScope {
         color: "black"
     }
 
-    MusicParticles {
-        anchors.fill: parent
-    }
+//    MusicParticles {
+//        anchors.fill: parent
+//    }
 
     Item {
         id: myGrid
