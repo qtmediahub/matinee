@@ -26,6 +26,7 @@ FocusScope {
     clip: true
     state: ""
     scale: 1
+    opacity: 1
 
     signal activateView(var type)
 
@@ -46,29 +47,18 @@ FocusScope {
 
     states: [
         State {
-            name: "active"
-            PropertyChanges {
-                target: rootRot
-                angle: 0
-            }
-            PropertyChanges {
-                target: root
-                scale: 1
-            }
-        },
-        State {
             name: "musicInactive"
             PropertyChanges {
                 target: rootRot
-                angle: -45
-            }
-            PropertyChanges {
-                target: root
-                scale: 0.8
+                angle: 0
             }
             PropertyChanges {
                 target: rootRot2
                 angle: 0
+            }
+            PropertyChanges {
+                target: shaderEffect1
+                factor: 1
             }
         },
         State {
@@ -106,12 +96,7 @@ FocusScope {
 
     transitions: [
         Transition {
-            from: ""
-            NumberAnimation { property: "scale"; duration: 600; easing.type: Easing.OutQuad }
-            NumberAnimation { property: "angle"; duration: 300; easing.type: Easing.OutQuad }
-            NumberAnimation { property: "opacity"; duration: 1000; easing.type: Easing.OutQuad }
-        },
-        Transition {
+            NumberAnimation { property: "factor"; duration: 1000; easing.type: Easing.OutQuad }
             NumberAnimation { property: "scale"; duration: 1200; easing.type: Easing.OutQuad }
             NumberAnimation { property: "angle"; duration: 600; easing.type: Easing.OutQuad }
             NumberAnimation { property: "opacity"; duration: 1000; easing.type: Easing.OutQuad }
@@ -216,6 +201,38 @@ FocusScope {
                 id: ipAddressFinder
             }
         }
+    }
+
+    ShaderEffect {
+        id: shaderEffect1
+        anchors.fill: parent
+        mesh: GridMesh {
+            resolution: Qt.size(20, 20)
+        }
+        property real factor: 0
+        property variant source: ShaderEffectSource {
+            id: shaderEffectSource1
+            sourceItem: container
+            smooth: true
+            hideSource: true
+        }
+
+        vertexShader: "
+            uniform highp mat4 qt_Matrix;
+            attribute highp vec4 qt_Vertex;
+            attribute highp vec2 qt_MultiTexCoord0;
+            varying highp vec2 qt_TexCoord0;
+            uniform highp float width;
+            uniform highp float factor;
+
+            void main() {
+                highp vec4 pos = qt_Vertex;
+                highp float d = factor * smoothstep(0., 1., qt_MultiTexCoord0.y);
+                pos.x = width * mix(d, 1.0 - d, qt_MultiTexCoord0.x);
+
+                gl_Position = qt_Matrix * pos;
+                qt_TexCoord0 = qt_MultiTexCoord0;
+            }"
     }
 
     Component.onCompleted: {
