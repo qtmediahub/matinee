@@ -136,6 +136,10 @@ FocusScope {
 
                 transitions: [
                     Transition {
+                        to: ""
+                        NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
+                    },
+                    Transition {
                         NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
                     }
                 ]
