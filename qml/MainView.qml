@@ -118,7 +118,7 @@ FocusScope {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             height: parent.height/1.5
-            width: parent.width*2
+            width: parent.width
             mediaType: mainMenu.mediaType
         }
 
