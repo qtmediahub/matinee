@@ -76,7 +76,7 @@ FocusScope {
         width: root.columns * (cellSize+spacing)
         height: (Math.floor(repeaterView.count/root.columns)) * (cellSize+spacing)
 
-        property int spacing: 20
+        property int spacing: 40
         property int cellSize: 256
 
         Repeater {
@@ -127,12 +127,16 @@ FocusScope {
                             target: viewDelegateRotation
                             angle: 360
                         }
+                        PropertyChanges {
+                            target: viewDelegateRotation2
+                            angle: 0
+                        }
                     }
                 ]
 
                 transitions: [
                     Transition {
-                        NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 1000; }
+                        NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
                     }
                 ]
 
@@ -152,7 +156,7 @@ FocusScope {
                             anchors.horizontalCenter: parent.horizontalCenter
                             anchors.topMargin: 40
                             text: model.artist
-                            color: "lightsteelblue"
+                            color: "steelblue"
                         }
                     }
                 }
@@ -201,6 +205,15 @@ FocusScope {
                         axis { x: 1; y: 0; z: 0 }
                         angle: 0
                         origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                    },
+                    Rotation {
+                        id: viewDelegateRotation2
+                        axis { x: 0; y: 0; z: 1 }
+                        angle: 30-Math.random()*60
+                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                        Behavior on angle {
+                            SpringAnimation { spring: 2; damping: 0.2 }
+                        }
                     }
                 ]
             }
