@@ -24,8 +24,8 @@ FocusScope {
     id: root
     anchors.fill: parent
     clip: true
-    state: "active"
-    scale: 0.8
+    state: ""
+    scale: 1
 
     signal activateView(var type)
 
@@ -34,7 +34,7 @@ FocusScope {
             id: rootRot
             axis { x: 0; y: 1; z: 0 }
             origin { x: root.width; y: root.height/2 }
-            angle: -45
+            angle: 0
         },
         Rotation {
             id: rootRot2
@@ -57,7 +57,37 @@ FocusScope {
             }
         },
         State {
-            name: "inactive2"
+            name: "musicInactive"
+            PropertyChanges {
+                target: rootRot
+                angle: -45
+            }
+            PropertyChanges {
+                target: root
+                scale: 0.8
+            }
+            PropertyChanges {
+                target: rootRot2
+                angle: 0
+            }
+        },
+        State {
+            name: "pictureInactive"
+            PropertyChanges {
+                target: rootRot
+                angle: -45
+            }
+            PropertyChanges {
+                target: root
+                scale: 0.8
+            }
+            PropertyChanges {
+                target: rootRot2
+                angle: 0
+            }
+        },
+        State {
+            name: "videoInactive"
             PropertyChanges {
                 target: rootRot2
                 angle: 50
@@ -65,6 +95,7 @@ FocusScope {
             PropertyChanges {
                 target: root
                 scale: 0.8
+                opacity: 0.5
             }
             PropertyChanges {
                 target: rootRot
@@ -75,111 +106,117 @@ FocusScope {
 
     transitions: [
         Transition {
-            from: "active"
+            from: ""
             NumberAnimation { property: "scale"; duration: 600; easing.type: Easing.OutQuad }
             NumberAnimation { property: "angle"; duration: 300; easing.type: Easing.OutQuad }
+            NumberAnimation { property: "opacity"; duration: 1000; easing.type: Easing.OutQuad }
         },
         Transition {
             NumberAnimation { property: "scale"; duration: 1200; easing.type: Easing.OutQuad }
             NumberAnimation { property: "angle"; duration: 600; easing.type: Easing.OutQuad }
+            NumberAnimation { property: "opacity"; duration: 1000; easing.type: Easing.OutQuad }
         }
     ]
 
-    Image {
+    Item {
+        id: container
         anchors.fill: parent
-        source: "../images/air.jpg"
-        smooth: true
-    }
 
-    PreviewGrid {
-        id: previewGrid
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        height: parent.height/1.5
-        width: parent.width*2
-        mediaType: mainMenu.mediaType
-    }
+        Image {
+            anchors.fill: parent
+            source: "../images/air.jpg"
+            smooth: true
+        }
 
-    Emitter {
-        system: particleSystem
+        PreviewGrid {
+            id: previewGrid
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            height: parent.height/1.5
+            width: parent.width*2
+            mediaType: mainMenu.mediaType
+        }
 
-        ParticleSystem {
-            id: particleSystem
+        Emitter {
+            system: particleSystem
 
-            ImageParticle {
-                system: particleSystem
-                alpha: 0
-                source: "../images/particle_circle_2.png"
+            ParticleSystem {
+                id: particleSystem
+
+                ImageParticle {
+                    system: particleSystem
+                    alpha: 0
+                    source: "../images/particle_circle_2.png"
+                }
+            }
+
+            emitRate: 0.1
+            lifeSpan: 40000
+
+            y: parent.height
+            x: 0
+            width: parent.width
+
+            speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
+            speedFromMovement: 8
+            size: 40
+            sizeVariation: 20
+        }
+
+        Emitter {
+            system: particleSystem2
+
+            ParticleSystem {
+                id: particleSystem2
+
+                ImageParticle {
+                    system: particleSystem2
+                    alpha: 0
+                    source: "../images/particle_circle_3.png"
+                }
+            }
+
+            emitRate: 0.1
+            lifeSpan: 40000
+
+            y: parent.height
+            x: 0
+            width: parent.width
+
+            speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
+            speedFromMovement: 8
+            size: 40
+            sizeVariation: 20
+        }
+
+        Clock {
+            id: clockItem
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.margins: 20
+        }
+
+        MainMenu {
+            id: mainMenu
+
+            height: 300
+            width: parent.width
+            anchors.bottom: parent.bottom
+            focus: true
+
+            onActivateView: root.activateView(type)
+        }
+
+        Text {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            text: ipAddressFinder.ipAddresses[0]
+
+            IpAddressFinder {
+                id: ipAddressFinder
             }
         }
-
-        emitRate: 0.1
-        lifeSpan: 40000
-
-        y: parent.height
-        x: 0
-        width: parent.width
-
-        speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
-        speedFromMovement: 8
-        size: 40
-        sizeVariation: 20
     }
-
-    Emitter {
-        system: particleSystem2
-
-        ParticleSystem {
-            id: particleSystem2
-
-            ImageParticle {
-                system: particleSystem2
-                alpha: 0
-                source: "../images/particle_circle_3.png"
-            }
-        }
-
-        emitRate: 0.1
-        lifeSpan: 40000
-
-        y: parent.height
-        x: 0
-        width: parent.width
-
-        speed: PointDirection {x: 0; y: -20; xVariation: 10; yVariation: 2;}
-        speedFromMovement: 8
-        size: 40
-        sizeVariation: 20
-    }
-
-    Clock {
-        id: clockItem
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 20
-    }
-
-    MainMenu {
-        id: mainMenu
-
-        height: 300
-        width: parent.width
-        anchors.bottom: parent.bottom
-        focus: true
-
-        onActivateView: root.activateView(type)
-    }
-
-    Text {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        text: ipAddressFinder.ipAddresses[0]
-
-        IpAddressFinder {
-            id: ipAddressFinder
-        }
-    }
-
 
     Component.onCompleted: {
         mainMenu.forceActiveFocus()

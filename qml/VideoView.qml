@@ -98,7 +98,6 @@ FocusScope {
             varying lowp vec2 coord;
             uniform sampler2D src;
             uniform lowp float qt_Opacity;
-            uniform lowp float foo;
 
             void main() {
                 lowp vec4 tex = texture2D(src, vec2(coord.x, coord.y)).rgba;

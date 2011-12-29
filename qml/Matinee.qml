@@ -20,10 +20,10 @@ import QtQuick 2.0
 
 FocusScope {
     id: matinee
-//    width: 1280
-//    height: 720
-    width: 1920
-    height: 1080
+    width: 1280
+    height: 720
+//    width: 1920
+//    height: 1080
 
     property int bigFont: matinee.width / 25
     property int mediumFont: matinee.width / 50
@@ -37,14 +37,24 @@ FocusScope {
     }
 
     function showView(view) {
-        if (view === videoView) {
-            matinee.activeView.state = "inactive2"
-        } else {
-            print("make view ''")
+        if (view == mainView) {
             matinee.activeView.state = ""
+            matinee.activeView = view
+            matinee.activeView.state = ""
+        } else if (view === videoView) {
+            matinee.activeView.state = "videoInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
+        } else if (view === pictureView) {
+            matinee.activeView.state = "pictureInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
+        } else if (view === musicView) {
+            matinee.activeView.state = "musicInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
         }
-        matinee.activeView = view
-        matinee.activeView.state = "active"
+
         matinee.activeView.forceActiveFocus()
     }
 
