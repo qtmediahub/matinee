@@ -30,17 +30,26 @@ FocusScope {
     signal back()
 
     property int currentIndex: 0
-    property real delegateZ: 0
 
     states: State {
         name: "active"
         PropertyChanges { target: root; opacity: 1 }
     }
 
-    MediaModel {
+//    MediaModel {
+//        id: pictureModel
+//        mediaType: "picture"
+//        structure: "year|month|fileName"
+//    }
+
+    ListModel {
         id: pictureModel
-        mediaType: "picture"
-        structure: "year|month|fileName"
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
     }
 
     Image {
@@ -55,15 +64,22 @@ FocusScope {
         height: parent.height
         navigation: false
 
+        property int columns: 3
+        property int xOffset: 5
+        property int yOffset: 0
+        property int spacing: 2
+
         light: Light {
             ambientColor: "white"
         }
 
         camera: Camera {
             id: mainCamera
-            property real myScale: 0
-            eye: Qt.vector3d(0, 0, 20)
-            center: Qt.vector3d(0, 0, 0)
+            property real myScale: -30
+            property real myScale2: 10
+            property real center1: 0
+            eye: Qt.vector3d(20, myScale2, myScale)
+            center: Qt.vector3d(0, 0, center1)
             farPlane: 10000
             nearPlane: 5
         }
@@ -74,20 +90,21 @@ FocusScope {
             delegate: Cube {
                 id: viewDelegate
                 effect: Effect {
-//                    texture: {
-//                        if (model.dotdot) return "../images/folder-music.png"
-//                        else if (model.previewUrl == "" ) return "../images/default-media.png"
-//                        else return model.previewUrl
-//                    }
-                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 1)
+                    texture: {
+                        if (model.dotdot) return ""
+                        else if (model.previewUrl == "" ) return "../images/default-media.png"
+                        else return model.previewUrl
+                    }
+//                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 1)
                     blending: true
                 }
 
-                x: (index%6)*1.1-3;
-                y: Math.floor(index/6)*1.1-2
-                z: root.currentIndex === index ? 4 : 1
+                x: (index % viewport.columns) * viewport.spacing + viewport.xOffset;
+                y: Math.floor(index / viewport.columns) * viewport.spacing + viewport.yOffset;
+                z: root.currentIndex === index ? -6 : 1
+                scale: root.currentIndex === index ? 3 : 1.8
 
-                 Behavior on z {
+                Behavior on z {
                      NumberAnimation { duration: 500; easing.type: Easing.OutBack }
                 }
 
@@ -106,24 +123,30 @@ FocusScope {
         }
     }
 
+    Text {
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: pictureModel.get(root.currentIndex).artist
+        font.pixelSize: 40
+        color: "white"
+    }
+
     SequentialAnimation {
         id: goIntoAnimation
         alwaysRunToEnd: true
         NumberAnimation {
-            target: root
-            property: "delegateZ"
-            to: 20
+            target: mainCamera
+            property: "center1"
+            to: -10
             duration: 250
-            easing.type: Easing.InQuad
         }
         NumberAnimation {
-            target: root
-            property: "delegateZ"
-            from: -1000
+            target: mainCamera
+            property: "center1"
+            from: 40
             to: 0
-            duration: 2000
+            duration: 400
             easing.type: Easing.OutBack
-            easing.overshoot: 0.2
         }
     }
 
