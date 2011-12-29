@@ -216,19 +216,22 @@ FocusScope {
             smooth: true
             hideSource: true
         }
+	
+	// bogus on raspberry pi
+	property real newWidth: width
 
         vertexShader: "
-            uniform highp mat4 qt_Matrix;
-            attribute highp vec4 qt_Vertex;
+            uniform lowp mat4 qt_Matrix;
+            attribute lowp vec4 qt_Vertex;
             attribute highp vec2 qt_MultiTexCoord0;
-            varying highp vec2 qt_TexCoord0;
-            uniform highp float width;
-            uniform highp float factor;
+            varying lowp vec2 qt_TexCoord0;
+            uniform highp float newWidth;
+            uniform lowp float factor;
 
             void main() {
                 highp vec4 pos = qt_Vertex;
-                highp float d = factor * smoothstep(0., 1., qt_MultiTexCoord0.y);
-                pos.x = width * mix(d, 1.0 - d, qt_MultiTexCoord0.x);
+                lowp float d = factor * smoothstep(0., 1., qt_MultiTexCoord0.y);
+                pos.x = newWidth * mix(d, 1.0 - d, qt_MultiTexCoord0.x);
 
                 gl_Position = qt_Matrix * pos;
                 qt_TexCoord0 = qt_MultiTexCoord0;
