@@ -220,6 +220,14 @@ FocusScope {
                         }
                     }
                 ]
+
+                // Timer to avoid too long static screens
+                Timer {
+                    interval: 4000*(Math.random()+1)
+                    running: viewDelegate.state != "active"
+                    repeat: true
+                    onTriggered: viewDelegateRotation2.angle = 30-Math.random()*60
+                }
             }
         }
     }
