@@ -24,13 +24,31 @@ FocusScope {
     width: 800
     height: 480
     opacity: 0
+    visible: false
 
     signal back()
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; opacity: 1 }
+        PropertyChanges { target: root; opacity: 1; visible: true }
     }
+
+    transitions: [
+        Transition {
+            to: ""
+            SequentialAnimation {
+                PauseAnimation { duration: 2000 }
+                PropertyAction { properties: "opacity, visible" }
+            }
+        },
+        Transition {
+            to: "active"
+            SequentialAnimation {
+                PropertyAction { properties: "visible" }
+                NumberAnimation { property: "opacity"; duration: 2000 }
+            }
+        }
+    ]
 
     MediaModel {
         id: pictureModel
@@ -140,8 +158,4 @@ FocusScope {
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()
     Keys.onDownPressed: gridView.moveCurrentIndexDown()
-
-    Behavior on opacity {
-        NumberAnimation { duration: 2000 }
-    }
 }
