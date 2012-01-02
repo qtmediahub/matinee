@@ -26,6 +26,7 @@ FocusScope {
     width: 800
     height: 480
     opacity: 0
+    visible: false
 
     signal back()
 
@@ -33,8 +34,25 @@ FocusScope {
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; opacity: 1 }
+        PropertyChanges { target: root; opacity: 1; visible: true }
     }
+
+    transitions: [
+        Transition {
+            to: ""
+            SequentialAnimation {
+                PauseAnimation { duration: 2000 }
+                PropertyAction { properties: "opacity, visible" }
+            }
+        },
+        Transition {
+            to: "active"
+            SequentialAnimation {
+                PropertyAction { properties: "visible" }
+                NumberAnimation { property: "opacity"; duration: 2000 }
+            }
+        }
+    ]
 
 //    MediaModel {
 //        id: pictureModel
@@ -157,8 +175,4 @@ FocusScope {
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
     Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
     Keys.onDownPressed: root.currentIndex = root.currentIndex-6
-
-    Behavior on opacity {
-        NumberAnimation { duration: 2000 }
-    }
 }

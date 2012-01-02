@@ -26,6 +26,7 @@ FocusScope {
     width: 800
     height: 480
     opacity: 0
+    visible: false
 
     signal back()
 
@@ -35,12 +36,23 @@ FocusScope {
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; opacity: 1 }
+        PropertyChanges { target: root; opacity: 1; visible: true }
     }
 
     transitions: [
         Transition {
-            NumberAnimation { properties: "opacity"; duration: 800; }
+            to: ""
+            SequentialAnimation {
+                NumberAnimation { property: "opacity"; duration: 500 }
+                PropertyAction { properties: "opacity, visible" }
+            }
+        },
+        Transition {
+            to: "active"
+            SequentialAnimation {
+                PropertyAction { properties: "visible" }
+                NumberAnimation { property: "opacity"; duration: 2000 }
+            }
         }
     ]
 
