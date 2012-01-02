@@ -68,6 +68,7 @@ FocusScope {
     Image {
         anchors.fill: parent
         source: "../images/stripes.png"
+        cache: false
     }
 
     Item {

@@ -111,9 +111,9 @@ FocusScope {
         anchors.fill: parent
         flow: GridView.TopToBottom
 //        model: pictureModel
-        model: 200
-        cellHeight: 128
-        cellWidth: 128
+        model: 100
+        cellHeight: 256
+        cellWidth: 130
         currentIndex: 0
         highlightRangeMode: GridView.StrictlyEnforceRange
         preferredHighlightBegin: height/2
@@ -123,9 +123,11 @@ FocusScope {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
 //            source: model.previewUrl
-            source: "../images/test/" + index%14 + ".png"
+            source: "../images/video/" + index%6 + ".jpg"
             scale: GridView.isCurrentItem ? 1.5 : 1.0
             z: GridView.isCurrentItem ? 2 : 1
+            smooth: true
+            transformOrigin: index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
 
             Behavior on scale {
                 NumberAnimation {}
