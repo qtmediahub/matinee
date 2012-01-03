@@ -77,102 +77,19 @@ FocusScope {
         cache: false
     }
 
-    Viewport {
-        id: viewport
-        width: parent.width
-        height: parent.height
-        navigation: false
-
-        property int columns: 3
-        property int xOffset: 5
-        property int yOffset: 0
-        property int spacing: 2
-
-        light: Light {
-            ambientColor: "white"
-        }
-
-        camera: Camera {
-            id: mainCamera
-            property real myScale: -30
-            property real myScale2: 10
-            property real center1: 0
-            eye: Qt.vector3d(20, myScale2, myScale)
-            center: Qt.vector3d(0, 0, center1)
-            farPlane: 10000
-            nearPlane: 5
-        }
-
-        Repeater {
-            id: repeaterView
-            model: pictureModel
-            delegate: Cube {
-                id: viewDelegate
-                effect: Effect {
-                    texture: {
-                        if (model.dotdot) return ""
-                        else if (model.previewUrl == "" ) return "../images/default-media.png"
-                        else return model.previewUrl
-                    }
-//                    color: Qt.rgba(Math.random(), Math.random(), Math.random(), 1)
-                    blending: true
-                }
-
-                x: (index % viewport.columns) * viewport.spacing + viewport.xOffset;
-                y: Math.floor(index / viewport.columns) * viewport.spacing + viewport.yOffset;
-                z: root.currentIndex === index ? -6 : 1
-                scale: root.currentIndex === index ? 3 : 1.8
-
-                Behavior on z {
-                     NumberAnimation { duration: 500; easing.type: Easing.OutBack }
-                }
-
-                transform: Rotation3D {
-                    axis: Qt.vector3d(0,1,0)
-                    angle: 0
-
-                    NumberAnimation on angle {
-                        running: root.currentIndex == index
-                        loops: Animation.Infinite
-                        from: 0; to: 360; duration: 2000
-                        alwaysRunToEnd: true
-                    }
-                }
-            }
-        }
+    Loader {
+        id: myLoader
+        anchors.fill: parent
+        source: "PictureViewViewport.qml"
     }
 
     Text {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        text: pictureModel.get(root.currentIndex).artist
+        text: pictureModel.get(myLoader.item.currentIndex).artist
         font.pixelSize: 40
         color: "white"
     }
 
-    SequentialAnimation {
-        id: goIntoAnimation
-        alwaysRunToEnd: true
-        NumberAnimation {
-            target: mainCamera
-            property: "center1"
-            to: -10
-            duration: 250
-        }
-        NumberAnimation {
-            target: mainCamera
-            property: "center1"
-            from: 40
-            to: 0
-            duration: 400
-            easing.type: Easing.OutBack
-        }
-    }
-
     Keys.onDeletePressed: root.back()
-    Keys.onEnterPressed: goIntoAnimation.start()
-    Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count-1
-    Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
-    Keys.onUpPressed: root.currentIndex = (root.currentIndex/6) < repeaterView.count/6-1 ? root.currentIndex+6 : root.currentIndex%6
-    Keys.onDownPressed: root.currentIndex = root.currentIndex-6
 }
