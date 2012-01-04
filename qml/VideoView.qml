@@ -140,6 +140,7 @@ FocusScope {
         delegate: Image {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
+            sourceSize.width: GridView.view.cellWidth
 //            source: model.previewUrl
             source: "../images/video/" + index%6 + ".jpg"
             scale: GridView.isCurrentItem ? 1.5 : 1.0

@@ -112,6 +112,7 @@ FocusScope {
             source: "../images/air.jpg"
             smooth: true
             cache: false
+            sourceSize.width: parent.width
         }
 
         PreviewGrid {
