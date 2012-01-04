@@ -72,11 +72,6 @@ FocusScope {
         ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
     }
 
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-    }
-
     Image {
         anchors.fill: parent
         source: "../images/stripes.png"
