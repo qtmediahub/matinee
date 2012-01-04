@@ -22,8 +22,8 @@ FocusScope {
     id: matinee
     width: 1280
     height: 720
-//    width: 1920
-//    height: 1080
+    scale: window.width/width
+    transformOrigin: Item.TopLeft
 
     property int bigFont: matinee.width / 25
     property int mediumFont: matinee.width / 50
@@ -91,3 +91,4 @@ FocusScope {
         onBack: matinee.showView(mainView)
     }
 }
+

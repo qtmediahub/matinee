@@ -90,7 +90,7 @@ FocusScope {
         color: "white"
     }
 
-    Keys.onDeletePressed: root.back()
+    Keys.onMenuPressed: root.back()
     Keys.onEnterPressed: viewport.showCurrentItem()
     Keys.onRightPressed: viewport.decrementCurrentIndex()
     Keys.onLeftPressed: viewport.incrementCurrentIndex()

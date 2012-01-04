@@ -154,7 +154,7 @@ FocusScope {
         }
     }
 
-    Keys.onDeletePressed: root.back()
+    Keys.onMenuPressed: root.back()
     Keys.onLeftPressed: gridView.moveCurrentIndexLeft()
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()

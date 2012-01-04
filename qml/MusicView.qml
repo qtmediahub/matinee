@@ -225,7 +225,7 @@ FocusScope {
                         angle: 30-Math.random()*60
                         origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
                         Behavior on angle {
-                            SpringAnimation { spring: 2; damping: 0.2 }
+                            SpringAnimation { spring: 2; damping: 0.2; }
                         }
                     }
                 ]
@@ -241,11 +241,15 @@ FocusScope {
         }
     }
 
-    Keys.onDeletePressed: root.back()
     Keys.onLeftPressed: root.currentIndex = root.currentIndex > 0 ? root.currentIndex-1 : repeaterView.count-1
     Keys.onRightPressed: root.currentIndex = root.currentIndex < repeaterView.count-1 ? root.currentIndex+1 : 0
-    Keys.onDownPressed: root.currentIndex = (root.currentIndex/root.columns) < repeaterView.count/root.columns-1 ? root.currentIndex+root.columns : root.currentIndex%root.columns
-    Keys.onUpPressed: root.currentIndex = root.currentIndex-root.columns
+    Keys.onMenuPressed: {
+        if (root.currentIndexSelected) {
+            root.currentIndexSelected = false
+        } else {
+            root.back()
+        }
+    }
     Keys.onEnterPressed: {
         if (root.currentIndexSelected) {
             root.currentIndexSelected = false
