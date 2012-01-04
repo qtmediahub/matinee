@@ -77,19 +77,21 @@ FocusScope {
         cache: false
     }
 
-    Loader {
-        id: myLoader
+    PictureViewViewport {
+        id: viewport
         anchors.fill: parent
-        source: "PictureViewViewport.qml"
     }
 
     Text {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
-        text: pictureModel.get(myLoader.item.currentIndex).artist
+        text: pictureModel.get(viewport.currentIndex).artist
         font.pixelSize: 40
         color: "white"
     }
 
     Keys.onDeletePressed: root.back()
+    Keys.onEnterPressed: viewport.showCurrentItem()
+    Keys.onRightPressed: viewport.decrementCurrentIndex()
+    Keys.onLeftPressed: viewport.incrementCurrentIndex()
 }

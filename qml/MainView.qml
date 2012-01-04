@@ -70,6 +70,7 @@ FocusScope {
             PropertyChanges {
                 target: root
                 scale: 0.8
+                anchors.rightMargin: -50
             }
             PropertyChanges {
                 target: rootRot2

@@ -27,11 +27,31 @@ Viewport {
     navigation: false
 
     property int columns: 3
-    property int xOffset: 5
-    property int yOffset: 0
     property int spacing: 2
 
-    property int currentIndex: 0
+    property int currentIndex: -1
+
+    states: [
+        State{
+            name: "selected"
+            PropertyChanges { target: mainCamera; eye: Qt.vector3d(0, 0, -4) }
+        }
+    ]
+
+    function showCurrentItem() {
+        if (root.state === "")
+            root.state = "selected"
+        else
+            root.state = ""
+    }
+
+    function incrementCurrentIndex() {
+        root.currentIndex = (root.currentIndex+1 >= pictureModel.count) ? pictureModel.count-1 : root.currentIndex + 1;
+    }
+
+    function decrementCurrentIndex() {
+        root.currentIndex = (root.currentIndex-1 < 0) ? 0 : root.currentIndex - 1;
+    }
 
     light: Light {
         ambientColor: "white"
@@ -39,13 +59,14 @@ Viewport {
 
     camera: Camera {
         id: mainCamera
-        property real myScale: -30
-        property real myScale2: 10
-        property real center1: 0
-        eye: Qt.vector3d(20, myScale2, myScale)
-        center: Qt.vector3d(0, 0, center1)
+        eye: Qt.vector3d(repeaterView.itemAt(root.currentIndex).x,repeaterView.itemAt(root.currentIndex).y,-5)
+        center: Qt.vector3d(0, 0, 0)
         farPlane: 10000
-        nearPlane: 5
+        nearPlane: 1
+
+        Behavior on eye {
+            Vector3dAnimation {}
+        }
     }
 
     ListModel {
@@ -73,13 +94,26 @@ Viewport {
                 blending: true
             }
 
-            x: (index % root.columns) * root.spacing + root.xOffset;
-            y: Math.floor(index / root.columns) * root.spacing + root.yOffset;
-            z: root.currentIndex === index ? -6 : 1
+            x: {
+                if (root.state === "selected") {
+                    if (root.currentIndex === index) return 0;
+                    else return 30;
+                } else return (index % root.columns) * root.spacing;
+            }
+            y: root.currentIndex === index && root.state === "selected" ? 0 : Math.floor(index / root.columns) * root.spacing;
+            z: 0
             scale: root.currentIndex === index ? 3 : 1.8
 
-            Behavior on z {
-                 NumberAnimation { duration: 500; easing.type: Easing.OutBack }
+            Behavior on scale {
+                NumberAnimation {}
+            }
+
+            Behavior on x {
+                 NumberAnimation {}
+            }
+
+            Behavior on y {
+                 NumberAnimation {}
             }
 
             transform: Rotation3D {
@@ -87,7 +121,7 @@ Viewport {
                 angle: 0
 
                 NumberAnimation on angle {
-                    running: root.currentIndex == index
+                    running: root.currentIndex === index && root.state === "selected"
                     loops: Animation.Infinite
                     from: 0; to: 360; duration: 2000
                     alwaysRunToEnd: true
@@ -96,22 +130,5 @@ Viewport {
         }
     }
 
-    SequentialAnimation {
-        id: goIntoAnimation
-        alwaysRunToEnd: true
-        NumberAnimation {
-            target: mainCamera
-            property: "center1"
-            to: -10
-            duration: 250
-        }
-        NumberAnimation {
-            target: mainCamera
-            property: "center1"
-            from: 40
-            to: 0
-            duration: 400
-            easing.type: Easing.OutBack
-        }
-    }
+    Component.onCompleted: root.currentIndex = 0
 }
