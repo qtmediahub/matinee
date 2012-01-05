@@ -28,6 +28,8 @@ Viewport {
 
     property int columns: 3
     property int spacing: 2
+    property int xOffset: 2
+    property int yOffset: -4
 
     property int currentIndex: -1
 
@@ -71,6 +73,9 @@ Viewport {
 
     ListModel {
         id: pictureModel
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
         ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
         ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
         ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
@@ -96,13 +101,19 @@ Viewport {
 
             x: {
                 if (root.state === "selected") {
-                    if (root.currentIndex === index) return 0;
+                    if (root.currentIndex === index) return 3 + root.xOffset;
                     else return 30;
-                } else return (index % root.columns) * root.spacing;
+                } else return (index % root.columns) * root.spacing + root.xOffset;
             }
-            y: root.currentIndex === index && root.state === "selected" ? 0 : Math.floor(index / root.columns) * root.spacing;
-            z: 0
-            scale: root.currentIndex === index ? 3 : 1.8
+            y: (root.currentIndex === index && root.state === "selected" ? 2 : Math.floor(index / root.columns) * root.spacing) + root.yOffset;
+            z: 5
+
+            scale:  {
+                if (root.currentIndex === index) {
+                    if (root.state === "selected") return 5;
+                    else return 3;
+                } else return 1.5;
+            }
 
             Behavior on scale {
                 NumberAnimation {}
