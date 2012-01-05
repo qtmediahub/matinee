@@ -40,7 +40,6 @@ Item {
         font.pixelSize: matinee.bigFont
         style: Text.Sunken
         color: "white"
-        anchors.right: parent.right
         Behavior on text {
             SequentialAnimation {
             ScriptAction { script: waveAnim.restart() }
@@ -55,6 +54,7 @@ Item {
             id: shaderEffect1
             width: theSource.sourceItem.width
             height: theSource.sourceItem.height
+            anchors.right: parent.right
 
             property variant source: ShaderEffectSource {
                 id: theSource
