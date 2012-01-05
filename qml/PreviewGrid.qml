@@ -65,7 +65,7 @@ Item {
                 NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
             }
 
-            PropertyAction { target: previewModel; property: "mediaType"}
+            PropertyAction { target: root; property: "mediaType"}
             PauseAnimation { duration: 500 }
             ParallelAnimation {
                 NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
@@ -87,21 +87,21 @@ Item {
     ListModel {
         id: videoModel
         ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
         ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
         ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
     }
 
     ListModel {
         id: pictureModel
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
         ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
         ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
     }
 
     ShaderEffectSource {
