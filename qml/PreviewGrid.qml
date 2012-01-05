@@ -24,8 +24,6 @@ Item {
     width: 800
     height: 480
 
-    property alias mediaType: previewModel.mediaType
-
     transform: Rotation {
         angle: -30 + matinee.width/200
         axis { x: 0; y: 1; z: 0 }
@@ -33,26 +31,77 @@ Item {
         origin.y: -50
     }
 
-    MediaModel {
-        id: previewModel
-        mediaType: "music"
-        structure: "fileName"
+//    property alias mediaType: previewModel.mediaType
 
-        Behavior on mediaType {
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
-                    NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
-                }
+//    MediaModel {
+//        id: previewModel
+//        mediaType: "music"
+//        structure: "fileName"
 
-                PropertyAction { target: previewModel; property: "mediaType"}
-                PauseAnimation { duration: 500 }
-                ParallelAnimation {
-                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
-                    NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
-                }
+//        Behavior on mediaType {
+//            SequentialAnimation {
+//                ParallelAnimation {
+//                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
+//                    NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
+//                }
+
+//                PropertyAction { target: previewModel; property: "mediaType"}
+//                PauseAnimation { duration: 500 }
+//                ParallelAnimation {
+//                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
+//                    NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
+//                }
+//            }
+//        }
+//    }
+
+    property string mediaType: "music"
+    property variant previewModel: mediaType === "music" ? musicModel : mediaType === "video" ? videoModel : pictureModel
+
+    Behavior on mediaType {
+        SequentialAnimation {
+            ParallelAnimation {
+                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
+                NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
+            }
+
+            PropertyAction { target: previewModel; property: "mediaType"}
+            PauseAnimation { duration: 500 }
+            ParallelAnimation {
+                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
+                NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
             }
         }
+    }
+
+    ListModel {
+        id: musicModel
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+    }
+
+    ListModel {
+        id: videoModel
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+    }
+
+    ListModel {
+        id: pictureModel
+        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
+        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
+        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
+        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
+        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
+        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
     }
 
     ShaderEffectSource {
@@ -110,12 +159,13 @@ Item {
                 lowp vec4 tex = texture2D(src, coord);
                 lowp vec4 color;
 
+                tex.rgba = tex.rgba + (1. - abs(coord.x - fadeMarginX));
+
                 if (coord.y < fadeMargin)
                     color = tex.rgba * qt_Opacity * coord.y*(1.0/fadeMargin);
                 else
                     color = tex.rgba * qt_Opacity;
 
-                color = color + (1. - abs(coord.x - fadeMarginX));
                 gl_FragColor = color * coord.x;
             }
         "
