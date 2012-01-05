@@ -58,6 +58,10 @@ Item {
                 matinee.activeView.state = "musicInactive"
                 matinee.activeView = view
                 matinee.activeView.state = "active"
+            } else if (view === radioView) {
+                matinee.activeView.state = "pictureInactive"
+                matinee.activeView = view
+                matinee.activeView.state = "active"
             }
 
             matinee.activeView.forceActiveFocus()
@@ -86,12 +90,20 @@ Item {
                     matinee.showView(pictureView);
                 } else if (type === "video") {
                     matinee.showView(videoView);
+                } else if (type === "radio") {
+                    matinee.showView(radioView);
                 }
             }
         }
 
         MusicView {
             id: musicView
+            anchors.fill: parent
+            onBack: matinee.showView(mainView)
+        }
+
+        RadioView {
+            id: radioView
             anchors.fill: parent
             onBack: matinee.showView(mainView)
         }

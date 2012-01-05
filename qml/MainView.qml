@@ -137,7 +137,7 @@ FocusScope {
                 }
             }
 
-            emitRate: 0.5
+            emitRate: 0.3
             lifeSpan: 30000
 
             y: parent.height
@@ -163,7 +163,7 @@ FocusScope {
                 }
             }
 
-            emitRate: 0.5
+            emitRate: 0.3
             lifeSpan: 30000
 
             y: parent.height
