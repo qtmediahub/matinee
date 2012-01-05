@@ -34,14 +34,75 @@ Item {
         onTriggered: { root.now = new Date() }
     }
 
+    Text {
+        id: timeLabel
+        text: Qt.formatDateTime(root.now, "hh:mm:ss")
+        font.pixelSize: matinee.bigFont
+        style: Text.Sunken
+        color: "white"
+        anchors.right: parent.right
+        Behavior on text {
+            SequentialAnimation {
+            ScriptAction { script: waveAnim.restart() }
+            PauseAnimation { duration: 350 }
+            PropertyAction {}
+            }
+        }
+    }
+
     Column {
-        Text {
-            id: timeLabel
-            text: Qt.formatDateTime(root.now, "hh:mm:ss")
-            font.pixelSize: matinee.bigFont
-            style: Text.Sunken
-            color: "white"
-            anchors.right: parent.right
+        ShaderEffect {
+            id: shaderEffect1
+            width: theSource.sourceItem.width
+            height: theSource.sourceItem.height
+
+            property variant source: ShaderEffectSource {
+                id: theSource
+                sourceItem: timeLabel
+                smooth: true
+                hideSource: true
+            }
+
+            property real wave: 0.3
+            property real waveOriginX: 0.5
+            property real waveOriginY: 0.5
+            property real waveWidth: 0.1
+            property real aspectRatio: width/height
+
+            NumberAnimation on wave {
+                id: waveAnim
+                running: false
+                easing.type: "InQuad"
+                from: 0.0000; to: 0.9000;
+                duration: 500
+            }
+
+            fragmentShader:
+                "
+                varying mediump vec2 qt_TexCoord0;
+                uniform sampler2D source;
+                uniform highp float wave;
+                uniform highp float waveWidth;
+                uniform highp float waveOriginX;
+                uniform highp float waveOriginY;
+                uniform highp float aspectRatio;
+
+                void main(void)
+                {
+                    mediump vec2 texCoord2 = qt_TexCoord0;
+                    mediump vec2 origin = vec2(waveOriginX, (1.0 - waveOriginY) / aspectRatio);
+
+                    highp float fragmentDistance = distance(vec2(texCoord2.s, texCoord2.t / aspectRatio), origin);
+                    highp float waveLength = waveWidth + fragmentDistance * 0.25;
+
+                    if ( fragmentDistance > wave && fragmentDistance < wave + waveLength) {
+                        highp float distanceFromWaveEdge = min(abs(wave - fragmentDistance), abs(wave + waveLength - fragmentDistance));
+                        texCoord2 += sin(1.57075 * distanceFromWaveEdge / waveLength) * distanceFromWaveEdge * 0.08 / fragmentDistance;
+                    }
+
+                    gl_FragColor = texture2D(source, texCoord2.st);
+                }
+                "
         }
 
         Text {
