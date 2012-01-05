@@ -61,15 +61,15 @@ Item {
     Behavior on mediaType {
         SequentialAnimation {
             ParallelAnimation {
-                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
-                NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
+                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1300; }
+                NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 700; easing.type: Easing.InQuad }
             }
 
             PropertyAction { target: root; property: "mediaType"}
-            PauseAnimation { duration: 500 }
+            PauseAnimation { duration: 100 }
             ParallelAnimation {
-                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
-                NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
+                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 800; }
+                NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 700; easing.type: Easing.OutQuad }
             }
         }
     }
