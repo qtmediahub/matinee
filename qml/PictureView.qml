@@ -75,10 +75,10 @@ FocusScope {
         cache: false
     }
 
-    PictureViewViewport {
-        id: viewport
-        anchors.fill: parent
-    }
+//    PictureViewViewport {
+//        id: viewport
+//        anchors.fill: parent
+//    }
 
     Text {
         anchors.top: parent.top

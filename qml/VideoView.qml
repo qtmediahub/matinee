@@ -128,10 +128,10 @@ FocusScope {
         id: gridView
         anchors.fill: parent
         flow: GridView.TopToBottom
-//        model: pictureModel
-        model: 100
+        model: pictureModel
+//        model: 100
         cellHeight: 256
-        cellWidth: 130
+        cellWidth: 256
         currentIndex: 0
         highlightRangeMode: GridView.StrictlyEnforceRange
         preferredHighlightBegin: height/2
@@ -141,8 +141,8 @@ FocusScope {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
             sourceSize.width: GridView.view.cellWidth
-//            source: model.previewUrl
-            source: "../images/video/" + index%6 + ".jpg"
+            source: model.previewUrl
+//            source: "../images/video/" + index%6 + ".jpg"
             scale: GridView.isCurrentItem ? 1.5 : 1.0
             z: GridView.isCurrentItem ? 2 : 1
             smooth: true

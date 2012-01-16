@@ -31,77 +31,28 @@ Item {
         origin.y: -50
     }
 
-//    property alias mediaType: previewModel.mediaType
+    property alias mediaType: previewModel.mediaType
 
-//    MediaModel {
-//        id: previewModel
-//        mediaType: "music"
-//        structure: "fileName"
+    MediaModel {
+        id: previewModel
+        mediaType: "music"
+        structure: mediaType == "music" ? "artist" : "fileName"
 
-//        Behavior on mediaType {
-//            SequentialAnimation {
-//                ParallelAnimation {
-//                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1500; }
-//                    NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 1000; easing.type: Easing.InQuad }
-//                }
+        Behavior on mediaType {
+            SequentialAnimation {
+                ParallelAnimation {
+                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1300; }
+                    NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 700; easing.type: Easing.InQuad }
+                }
 
-//                PropertyAction { target: previewModel; property: "mediaType"}
-//                PauseAnimation { duration: 500 }
-//                ParallelAnimation {
-//                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 1000; }
-//                    NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 1000; easing.type: Easing.OutQuad }
-//                }
-//            }
-//        }
-//    }
-
-    property string mediaType: "music"
-    property variant previewModel: mediaType === "music" ? musicModel : mediaType === "video" ? videoModel : pictureModel
-
-    Behavior on mediaType {
-        SequentialAnimation {
-            ParallelAnimation {
-                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 0; to: 3; duration: 1300; }
-                NumberAnimation { target: previewView; property: "contentX"; to: -previewView.width*2; duration: 700; easing.type: Easing.InQuad }
-            }
-
-            PropertyAction { target: root; property: "mediaType"}
-            PauseAnimation { duration: 100 }
-            ParallelAnimation {
-                NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 800; }
-                NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 700; easing.type: Easing.OutQuad }
+                PropertyAction { target: previewModel; property: "mediaType"}
+                PauseAnimation { duration: 100 }
+                ParallelAnimation {
+                    NumberAnimation { target: shaderEffect1; property: "fadeMarginX"; from: 3; to: 0; duration: 800; }
+                    NumberAnimation { target: previewView; property: "contentX"; to: 0; duration: 700; easing.type: Easing.OutQuad }
+                }
             }
         }
-    }
-
-    ListModel {
-        id: musicModel
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
-        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
-    }
-
-    ListModel {
-        id: videoModel
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-    }
-
-    ListModel {
-        id: pictureModel
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
     }
 
     ShaderEffectSource {
@@ -213,16 +164,14 @@ Item {
             "
     }
 
-    GridView {
+    ListView {
         id: previewView
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width
         height: parent.height/2
-        cellHeight: height/1
-        cellWidth: cellHeight
         model: previewModel
-        flow: GridView.TopToBottom
+        orientation: ListView.Horizontal
         clip: true
         interactive: false
 
@@ -236,15 +185,14 @@ Item {
         }
 
         delegate: Item {
-            id: delegateImage
-            width: GridView.view.cellWidth
-            height: GridView.view.cellHeight
+            id: delegate
+            width: ListView.view.height
+            height: ListView.view.height
 
             Image {
                 anchors.fill: parent
                 source: model.previewUrl
-//                source: "../images/test/" + (index % 9) + ".png"
-                sourceSize.width: delegateImage.GridView.view.cellWidth
+                sourceSize.width: delegate.width
             }
         }
     }

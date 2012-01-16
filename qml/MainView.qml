@@ -115,8 +115,7 @@ FocusScope {
             sourceSize.width: parent.width
         }
 
-        PreviewGrid {
-            id: previewGrid
+        PreviewList {
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             height: parent.height/1.5
