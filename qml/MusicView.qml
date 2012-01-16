@@ -56,20 +56,10 @@ FocusScope {
         }
     ]
 
-//    MediaModel {
-//        id: musicModel
-//        mediaType: "music"
-//        structure: "artist|title"
-//    }
-
-    ListModel {
+    MediaModel {
         id: musicModel
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
-        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+        mediaType: "music"
+        structure: "artist|title"
     }
 
     Image {
@@ -79,163 +69,175 @@ FocusScope {
         sourceSize.width: parent.width
     }
 
-    Item {
-        id: myGrid
+    Flickable {
         anchors.centerIn: parent
-        width: root.columns * (cellSize+spacing)
-        height: (Math.floor(repeaterView.count/root.columns)) * (cellSize+spacing)
+        width: myGrid.width
+        height: parent.height
+        contentWidth: myGrid.width
+        contentHeight: myGrid.height
+        contentY: repeaterView.itemAt(root.currentIndex).y-(height/2-myGrid.cellSize/2)
 
-        property int spacing: 40
-        property int cellSize: 256
+        Behavior on contentY {
+            NumberAnimation { duration: 1000; easing.type: Easing.OutExpo}
+        }
 
-        Repeater {
-            id: repeaterView
-            model: musicModel
-            delegate:  Item {
-                id: viewDelegate
+        Item {
+            id: myGrid
+            width: root.columns * (cellSize+spacing)
+            height: (Math.floor(repeaterView.count/root.columns)) * (cellSize+spacing)
 
-                property real swing: 0
+            property int spacing: 40
+            property int cellSize: 256
 
-                x: (index%root.columns)*(myGrid.cellSize+myGrid.spacing)
-                y: Math.floor(index/root.columns)*(myGrid.cellSize+myGrid.spacing)
-                width: myGrid.cellSize
-                height: myGrid.cellSize
-                smooth: true
-                opacity: 0.4
-                scale: 1
-                z: 0
-                state: root.currentIndex === index ? (root.currentIndexSelected ? "active" : "selected") : ""
+            Repeater {
+                id: repeaterView
+                model: musicModel
+                delegate:  Item {
+                    id: viewDelegate
 
-                states: [
-                    State {
-                        name: "selected"
-                        PropertyChanges {
-                            target: viewDelegate
-                            swing: 0
-                            scale: 1.5
-                            opacity: 1
-                            z: 2
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation
-                            angle: 360
-                        }
-                    },
-                    State {
-                        name: "active"
-                        PropertyChanges {
-                            target: viewDelegate
-                            swing: 120
-                            scale: 2
-                            opacity: 1
-                            x: myGrid.width/2 - viewDelegate.width/2
-                            y: myGrid.height/2 - viewDelegate.height/2
-                            z: 2
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation
-                            angle: 360
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation2
-                            angle: 0
-                        }
-                    }
-                ]
+                    property real swing: 0
 
-                transitions: [
-                    Transition {
-                        to: ""
-                        NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
-                    },
-                    Transition {
-                        NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
-                    }
-                ]
+                    x: (index%root.columns)*(myGrid.cellSize+myGrid.spacing)
+                    y: Math.floor(index/root.columns)*(myGrid.cellSize+myGrid.spacing)
+                    width: myGrid.cellSize
+                    height: myGrid.cellSize
+                    smooth: true
+                    opacity: 0.4
+                    scale: 1
+                    z: 0
+                    state: root.currentIndex === index ? (root.currentIndexSelected ? "active" : "selected") : ""
 
-                Rectangle {
-                    id: discContent
-                    color: "#111111"
-                    anchors.fill: parent
-
-                    Image {
-                        source: "../images/media-optical.png"
-                        anchors.fill: parent
-                        smooth: true
-
-                        Text {
-                            id: discContentTitle
-                            anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.topMargin: 40
-                            text: model.artist
-                            color: "steelblue"
-                        }
-                    }
-                }
-
-                Item {
-                    id: discCover
-                    anchors.fill: parent
-
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#222222"
-                    }
-
-                    transform: [
-                        Rotation {
-                            axis { x: 0; y: 1; z: 0 }
-                            angle: viewDelegate.swing
-                            origin { x: viewDelegate.width; y: viewDelegate.height/2; }
+                    states: [
+                        State {
+                            name: "selected"
+                            PropertyChanges {
+                                target: viewDelegate
+                                swing: 0
+                                scale: 1.5
+                                opacity: 1
+                                z: 2
+                            }
+                            PropertyChanges {
+                                target: viewDelegateRotation
+                                angle: 360
+                            }
+                        },
+                        State {
+                            name: "active"
+                            PropertyChanges {
+                                target: viewDelegate
+                                swing: 120
+                                scale: 2
+                                opacity: 1
+                                x: myGrid.width/2 - viewDelegate.width/2
+                                y: myGrid.height/2 - viewDelegate.height/2
+                                z: 2
+                            }
+                            PropertyChanges {
+                                target: viewDelegateRotation
+                                angle: 360
+                            }
+                            PropertyChanges {
+                                target: viewDelegateRotation2
+                                angle: 0
+                            }
                         }
                     ]
 
-                    Image {
-                        id: discCoverImage
+                    transitions: [
+                        Transition {
+                            to: ""
+                            NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
+                        },
+                        Transition {
+                            NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
+                        }
+                    ]
+
+                    Rectangle {
+                        id: discContent
+                        color: "#111111"
                         anchors.fill: parent
-                        anchors.margins: 10
-                        smooth: true
-                        source: {
-                            if (model.dotdot) return "../images/folder-music.png"
-                            else if (model.previewUrl == "" ) return ""
-                            else return model.previewUrl
+
+                        Image {
+                            source: "../images/media-optical.png"
+                            anchors.fill: parent
+                            smooth: true
+
+                            Text {
+                                id: discContentTitle
+                                anchors.top: parent.top
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.topMargin: 40
+                                text: model.artist
+                                color: "steelblue"
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: discCover
+                        anchors.fill: parent
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: "#222222"
                         }
 
                         transform: [
                             Rotation {
                                 axis { x: 0; y: 1; z: 0 }
-                                angle: viewDelegate.swing < 90 ? 0 : 180
-                                origin { x: discCoverImage.width/2; y: discCoverImage.height/2; }
+                                angle: viewDelegate.swing
+                                origin { x: viewDelegate.width; y: viewDelegate.height/2; }
                             }
                         ]
-                    }
-                }
 
-                transform: [
-                    Rotation {
-                        id: viewDelegateRotation
-                        axis { x: 1; y: 0; z: 0 }
-                        angle: 0
-                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
-                    },
-                    Rotation {
-                        id: viewDelegateRotation2
-                        axis { x: 0; y: 0; z: 1 }
-                        angle: 30-Math.random()*60
-                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
-                        Behavior on angle {
-                            SpringAnimation { spring: 2; damping: 0.2; }
+                        Image {
+                            id: discCoverImage
+                            anchors.fill: parent
+                            anchors.margins: 10
+                            smooth: true
+                            source: {
+                                if (model.dotdot) return "../images/folder-music.png"
+                                else if (model.previewUrl == "" ) return ""
+                                else return model.previewUrl
+                            }
+
+                            transform: [
+                                Rotation {
+                                    axis { x: 0; y: 1; z: 0 }
+                                    angle: viewDelegate.swing < 90 ? 0 : 180
+                                    origin { x: discCoverImage.width/2; y: discCoverImage.height/2; }
+                                }
+                            ]
                         }
                     }
-                ]
 
-                // Timer to avoid too long static screens
-                Timer {
-                    interval: 5000
-                    running: viewDelegate.state == "selected"
-                    repeat: true
-                    onTriggered: viewDelegateRotation2.angle = 30-Math.random()*60
+                    transform: [
+                        Rotation {
+                            id: viewDelegateRotation
+                            axis { x: 1; y: 0; z: 0 }
+                            angle: 0
+                            origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                        },
+                        Rotation {
+                            id: viewDelegateRotation2
+                            axis { x: 0; y: 0; z: 1 }
+                            angle: 30-Math.random()*60
+                            origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
+                            Behavior on angle {
+                                SpringAnimation { spring: 2; damping: 0.2; }
+                            }
+                        }
+                    ]
+
+                    // Timer to avoid too long static screens
+                    Timer {
+                        interval: 5000
+                        running: viewDelegate.state == "selected"
+                        repeat: true
+                        onTriggered: viewDelegateRotation2.angle = 30-Math.random()*60
+                    }
                 }
             }
         }
