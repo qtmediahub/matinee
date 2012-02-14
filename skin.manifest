@@ -1,7 +1,8 @@
 {
     "name": "Matinee",
     "version": "0.1",
-
+    "qmlVersion": "2",
+    
     "resolutions": {
         "720p": {
             "file": "qml/Matinee.qml"
