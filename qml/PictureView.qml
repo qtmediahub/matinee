@@ -180,17 +180,26 @@ FocusScope {
             State {
                 name: "active"
                 PropertyChanges { target: slideShow; x: 0 }
+                ParentChange { target: slideShow; parent: root.parent }
             }
         ]
 
         transitions: [
             Transition {
                 to: "active"
-                NumberAnimation { property: "x"; duration: 1000; easing.type: Easing.OutBounce; easing.amplitude: 0.2 }
+                SequentialAnimation {
+                    ParentAnimation { target: slideShow }
+                    ScriptAction { script: { slideShowListView.focus = true } }
+                    NumberAnimation { property: "x"; duration: 1000; easing.type: Easing.OutBounce; easing.amplitude: 0.2 }
+                }
             },
             Transition {
                 to: ""
-                NumberAnimation { property: "x"; duration: 500; }
+                SequentialAnimation {
+                    NumberAnimation { property: "x"; duration: 500; }
+                    ParentAnimation { target: slideShow }
+                    ScriptAction { script: { root.focus = true; pictureGrid.focus = true } }
+                }
             }
         ]
 
@@ -238,12 +247,8 @@ FocusScope {
             Keys.onDownPressed: slideShowListView.rotateCurrentItem(90)
             Keys.onUpPressed: slideShowListView.rotateCurrentItem(-90)
 
-            Keys.onMenuPressed: {
-                slideShow.parent = root
-                slideShow.state = ""
-                root.focus = true
-                pictureGrid.focus = true
-            }
+            Keys.onEnterPressed: slideShow.state = ""
+            Keys.onMenuPressed: slideShow.state = ""
         }
     }
 
@@ -260,17 +265,13 @@ FocusScope {
     //        color: "white"
     //    }
 
-    Keys.onMenuPressed: {
-        root.back()
-    }
+    Keys.onMenuPressed: root.back()
     Keys.onEnterPressed: {
         if (slideShow.state === "") {
             slideShowListView.highlightMoveDuration = 0
             slideShowListView.currentIndex = pictureGrid.currentIndex
             slideShowListView.highlightMoveDuration = 500
-            slideShow.parent = root.parent
             slideShow.state = "active"
-            slideShowListView.focus = true
         }
     }
 
