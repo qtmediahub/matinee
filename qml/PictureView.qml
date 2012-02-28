@@ -52,20 +52,10 @@ FocusScope {
         }
     ]
 
-//    MediaModel {
-//        id: pictureModel
-//        mediaType: "picture"
-//        structure: "year|month|fileName"
-//    }
-
-    ListModel {
+    MediaModel {
         id: pictureModel
-        ListElement { previewUrl: "../images/audio/amphetamin.jpg"; artist: "Amphetamin" }
-        ListElement { previewUrl: "../images/audio/enemy_leone.jpg"; artist: "Enemy Leone" }
-        ListElement { previewUrl: "../images/audio/ensueno.jpg"; artist: "Ensueno" }
-        ListElement { previewUrl: "../images/audio/hopeful_expectations.jpg"; artist: "Expectations" }
-        ListElement { previewUrl: "../images/audio/calle_n.jpg"; artist: "Calle N" }
-        ListElement { previewUrl: "../images/audio/soundasen.jpg"; artist: "Soundasen" }
+        mediaType: "picture"
+        structure: "fileName"
     }
 
     Image {
@@ -75,21 +65,124 @@ FocusScope {
         cache: false
     }
 
-//    PictureViewViewport {
-//        id: viewport
-//        anchors.fill: parent
-//    }
+    Item {
+        id: pictureGridContainer
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
 
-    Text {
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: pictureModel.get(viewport.currentIndex).artist
-        font.pixelSize: 40
-        color: "white"
+        width: parent.width
+        height: childrenRect.height
+
+        Rectangle {
+            anchors.fill: parent
+            color: "black"
+            opacity: 0.5
+        }
+
+        GridView {
+            id: pictureGrid
+
+
+            width: cellWidth * 3
+            height: matinee.height/1.2
+
+            focus: true
+            cellHeight: 256
+            cellWidth: cellHeight
+            model: pictureModel
+
+            highlightRangeMode: GridView.StrictlyEnforceRange
+            preferredHighlightBegin: height/3
+            preferredHighlightEnd: height/3
+            highlightMoveDuration: 500
+
+            delegate: Item {
+                id: delegate
+
+                width: GridView.view.cellWidth
+                height: GridView.view.cellHeight
+                opacity: GridView.isCurrentItem ? 1 : 0.5
+                z: GridView.isCurrentItem ? 1 : 0
+                rotation: GridView.isCurrentItem ? -45 + (Math.random() * 90) : 0
+
+                Behavior on opacity {
+                    NumberAnimation {}
+                }
+
+                Behavior on rotation {
+                    RotationAnimation {
+                        duration: 2000
+                        easing.type: Easing.OutElastic
+                    }
+                }
+
+                Image {
+                    source: {
+                        if (model.dotdot) return ""
+                        else if (model.previewUrl == "" ) return "../images/default-media.png"
+                        else return model.previewUrl
+                    }
+                    width: parent.width-20
+                    height: parent.height-20
+                    anchors.centerIn: parent
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                }
+            }
+        }
     }
 
+    ShaderEffectSource {
+        id: theSource2
+        sourceItem: pictureGridContainer
+        smooth: true
+        hideSource: true
+    }
+
+    ShaderEffect {
+        width: theSource2.sourceItem.width
+        height: theSource2.sourceItem.height
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+
+        property variant src: theSource2
+        property real alpha: 0.5
+
+        fragmentShader:
+            "
+            varying highp vec2 qt_TexCoord0;
+            uniform sampler2D src;
+            uniform lowp float qt_Opacity;
+            uniform lowp float alpha;
+
+            void main() {
+                highp vec4 tex = texture2D(src, vec2(qt_TexCoord0.x, qt_TexCoord0.y));
+
+                if (qt_TexCoord0.y < alpha)
+                    tex.rgba = tex.rgba * qt_TexCoord0.y * (1./0.2);
+                if (qt_TexCoord0.y > (1. - alpha))
+                    tex.rgba = tex.rgba * (1.-qt_TexCoord0.y) * (1./0.2);
+
+                gl_FragColor = tex * qt_Opacity;
+            }
+            "
+    }
+
+    //    PictureViewViewport {
+    //        id: viewport
+    //        anchors.fill: parent
+    //    }
+
+    //    Text {
+    //        anchors.top: parent.top
+    //        anchors.horizontalCenter: parent.horizontalCenter
+    //        text: pictureModel.get(viewport.currentIndex).artist
+    //        font.pixelSize: 40
+    //        color: "white"
+    //    }
+
     Keys.onMenuPressed: root.back()
-    Keys.onEnterPressed: viewport.showCurrentItem()
-    Keys.onRightPressed: viewport.decrementCurrentIndex()
-    Keys.onLeftPressed: viewport.incrementCurrentIndex()
+    //    Keys.onEnterPressed: viewport.showCurrentItem()
+    //    Keys.onRightPressed: viewport.decrementCurrentIndex()
+    //    Keys.onLeftPressed: viewport.incrementCurrentIndex()
 }

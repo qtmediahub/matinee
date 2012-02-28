@@ -108,5 +108,11 @@ Item {
             onBack: matinee.showView(mainView)
         }
     }
+
+    Component.onCompleted: {
+        runtime.mediaScanner.addSearchPath("music", "/home/jzellner/minimal_media/music/", "music");
+        runtime.mediaScanner.addSearchPath("video", "/home/jzellner/minimal_media/video/", "video");
+        runtime.mediaScanner.addSearchPath("picture", "/home/jzellner/minimal_media/picture/", "picture");
+    }
 }
 
