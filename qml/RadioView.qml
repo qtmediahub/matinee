@@ -17,8 +17,6 @@
  */
 
 import QtQuick 2.0
-import Qt3D 1.0
-import Qt3D.Shapes 1.0
 import MediaModel 1.0
 
 FocusScope {
@@ -53,42 +51,6 @@ FocusScope {
             }
         }
     ]
-
-        Image {
-            id: qtLogo
-            source: "../images/qtlogo.png"
-            smooth: true
-            width: 256
-            height: 256
-            fillMode: Image.PreserveAspectFit
-        }
-
-        ShaderEffect {
-            id: shaderEffect1
-            width: theSource.sourceItem.width
-            height: theSource.sourceItem.height
-            anchors.left: parent.left
-            anchors.leftMargin: 200
-            anchors.verticalCenter: parent.verticalCenter
-
-            property variant source: ShaderEffectSource {
-                id: theSource
-                sourceItem: qtLogo
-                smooth: true
-                hideSource: true
-            }
-
-            fragmentShader:
-                "
-                varying mediump vec2 qt_TexCoord0;
-                uniform sampler2D source;
-
-                void main(void)
-                {
-                    gl_FragColor = texture2D(source, qt_TexCoord0.st);
-                }
-                "
-        }
 
     Keys.onMenuPressed: root.back()
 }

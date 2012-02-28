@@ -17,8 +17,6 @@
  */
 
 import QtQuick 2.0
-import Qt3D 1.0
-import Qt3D.Shapes 1.0
 import MediaModel 1.0
 
 FocusScope {
