@@ -82,7 +82,6 @@ FocusScope {
         GridView {
             id: pictureGrid
 
-
             width: cellWidth * 3
             height: matinee.height/1.2
 
@@ -168,6 +167,86 @@ FocusScope {
             "
     }
 
+
+    Rectangle {
+        id: slideShow
+        width: parent.width
+        height: parent.height
+        color: "black"
+        x: parent.width
+        state: ""
+
+        states: [
+            State {
+                name: "active"
+                PropertyChanges { target: slideShow; x: 0 }
+            }
+        ]
+
+        transitions: [
+            Transition {
+                to: "active"
+                NumberAnimation { property: "x"; duration: 1000; easing.type: Easing.OutBounce; easing.amplitude: 0.2 }
+            },
+            Transition {
+                to: ""
+                NumberAnimation { property: "x"; duration: 500; }
+            }
+        ]
+
+        ListView {
+            id: slideShowListView
+
+            anchors.fill: parent
+            orientation: ListView.Horizontal
+            snapMode: ListView.SnapToItem
+            highlightRangeMode: ListView.StrictlyEnforceRange
+            highlightMoveDuration: 500
+            highlightMoveSpeed: -1
+            highlightFollowsCurrentItem: true
+            model: pictureModel
+            clip: true
+
+            function rotateCurrentItem(angle) {
+                // ensure to always be 90degree aligned
+                slideShowListView.currentItem.rotation = Math.round((slideShowListView.currentItem.rotation + angle) / 90) * 90
+            }
+
+            delegate: Item {
+                width: slideShowListView.width
+                height: slideShowListView.height
+                Image {
+                    id: image
+                    fillMode: Image.PreserveAspectFit
+                    sourceSize.width: imageThumbnail.width > imageThumbnail.height ? parent.width : 0
+                    sourceSize.height: imageThumbnail.width <= imageThumbnail.height ? parent.height : 0
+                    anchors.fill: parent
+                    source: model.filepath
+                    asynchronous: true
+                }
+                Image {
+                    id: imageThumbnail
+                    anchors.fill: image
+                    fillMode: Image.PreserveAspectFit
+                    visible: image.status != Image.Ready
+                    source: model.previewUrl
+                }
+
+                Behavior on rotation { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
+            }
+
+            Keys.onDownPressed: slideShowListView.rotateCurrentItem(90)
+            Keys.onUpPressed: slideShowListView.rotateCurrentItem(-90)
+
+            Keys.onMenuPressed: {
+                slideShow.parent = root
+                slideShow.state = ""
+                root.focus = true
+                pictureGrid.focus = true
+            }
+        }
+    }
+
     //    PictureViewViewport {
     //        id: viewport
     //        anchors.fill: parent
@@ -181,7 +260,20 @@ FocusScope {
     //        color: "white"
     //    }
 
-    Keys.onMenuPressed: root.back()
+    Keys.onMenuPressed: {
+        root.back()
+    }
+    Keys.onEnterPressed: {
+        if (slideShow.state === "") {
+            slideShowListView.highlightMoveDuration = 0
+            slideShowListView.currentIndex = pictureGrid.currentIndex
+            slideShowListView.highlightMoveDuration = 500
+            slideShow.parent = root.parent
+            slideShow.state = "active"
+            slideShowListView.focus = true
+        }
+    }
+
     //    Keys.onEnterPressed: viewport.showCurrentItem()
     //    Keys.onRightPressed: viewport.decrementCurrentIndex()
     //    Keys.onLeftPressed: viewport.incrementCurrentIndex()
