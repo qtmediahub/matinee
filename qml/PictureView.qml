@@ -168,11 +168,10 @@ FocusScope {
     }
 
 
-    Rectangle {
+    Item {
         id: slideShow
         width: parent.width
         height: parent.height
-        color: "black"
         x: parent.width
         state: ""
 
@@ -180,6 +179,7 @@ FocusScope {
             State {
                 name: "active"
                 PropertyChanges { target: slideShow; x: 0 }
+                PropertyChanges { target: slideShowBackground; opacity: 1 }
                 ParentChange { target: slideShow; parent: root.parent }
             }
         ]
@@ -191,17 +191,25 @@ FocusScope {
                     ParentAnimation { target: slideShow }
                     ScriptAction { script: { slideShowListView.focus = true } }
                     NumberAnimation { property: "x"; duration: 1000; easing.type: Easing.OutBounce; easing.amplitude: 0.2 }
+                    NumberAnimation { property: "opacity"; duration: 500; }
                 }
             },
             Transition {
                 to: ""
                 SequentialAnimation {
-                    NumberAnimation { property: "x"; duration: 500; }
+                    NumberAnimation { properties: "x, opacity"; duration: 500; }
                     ParentAnimation { target: slideShow }
                     ScriptAction { script: { root.focus = true; pictureGrid.focus = true } }
                 }
             }
         ]
+
+        Rectangle {
+            id: slideShowBackground
+            anchors.fill: parent
+            color: "black"
+            opacity: 0
+        }
 
         ListView {
             id: slideShowListView
