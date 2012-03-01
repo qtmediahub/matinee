@@ -18,6 +18,7 @@
 
 import QtQuick 2.0
 import MediaModel 1.0
+import QtMultimedia 4.0
 
 FocusScope {
     id: root
@@ -25,6 +26,8 @@ FocusScope {
     height: 480
     opacity: 0
     visible: false
+
+    property alias mediaModel: pictureModel
 
     signal back()
 
@@ -54,11 +57,6 @@ FocusScope {
         id: pictureModel
         mediaType: "video"
         structure: "fileName"
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
     }
 
     ShaderEffectSource {
@@ -129,7 +127,6 @@ FocusScope {
         anchors.fill: parent
         flow: GridView.TopToBottom
         model: pictureModel
-//        model: 100
         cellHeight: 256
         cellWidth: 256
         currentIndex: 0
@@ -138,18 +135,42 @@ FocusScope {
         preferredHighlightEnd: height/2
         highlightMoveDuration: 1000
         delegate: Image {
+            id: delegate
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
             sourceSize.width: GridView.view.cellWidth
             source: model.previewUrl
-//            source: "../images/video/" + index%6 + ".jpg"
             scale: GridView.isCurrentItem ? 1.5 : 1.0
             z: GridView.isCurrentItem ? 2 : 1
             smooth: true
             transformOrigin: index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
 
+            property variant filepath: model.filepath
+
             Behavior on scale {
                 NumberAnimation {}
+            }
+
+            property bool isActive: GridView.isCurrentItem
+
+            onIsActiveChanged: {
+                if (isActive)
+                    video.play()
+                else
+                    video.pause()
+            }
+
+            MediaPlayer {
+                id: video
+                source: delegate.filepath
+                volume: 0
+                playing: false
+            }
+
+            VideoOutput {
+                source: video
+                anchors.fill: parent
+                fillMode: VideoOutput.PreserveAspectCrop
             }
         }
     }
@@ -159,4 +180,5 @@ FocusScope {
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()
     Keys.onDownPressed: gridView.moveCurrentIndexDown()
+    Keys.onEnterPressed: matinee.mediaPlayer.playForeground(pictureModel, gridView.currentIndex+1)
 }

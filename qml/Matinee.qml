@@ -35,6 +35,7 @@ Item {
         property int smallFont: matinee.width / 70
 
         property variant activeView: mainView
+        property alias mediaPlayer: mediaPlayer
 
         Rectangle {
             anchors.fill: parent
@@ -65,6 +66,11 @@ Item {
             }
 
             matinee.activeView.forceActiveFocus()
+        }
+
+        AVPlayer {
+            id: mediaPlayer
+            anchors.fill: parent
         }
 
         PictureView {
