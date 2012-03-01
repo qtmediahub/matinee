@@ -196,7 +196,7 @@ FocusScope {
         Text {
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            text: ipAddressFinder.ipAddresses[0]
+            text: ipAddressFinder.ipAddresses.length > 0 ? ipAddressFinder.ipAddresses[0] : ""
 
             IpAddressFinder {
                 id: ipAddressFinder
