@@ -18,7 +18,6 @@
 
 import QtQuick 2.0
 import MediaModel 1.0
-import QtMultimedia 4.0
 
 FocusScope {
     id: root
@@ -154,23 +153,20 @@ FocusScope {
             property bool isActive: GridView.isCurrentItem
 
             onIsActiveChanged: {
+                if (videoLivePreview.status !== Loader.Ready)
+                    return;
+
                 if (isActive)
-                    video.play()
+                    videoLivePreview.item.play()
                 else
-                    video.pause()
+                    videoLivePreview.item.pause()
             }
 
-            MediaPlayer {
-                id: video
-                source: delegate.filepath
-                volume: 0
-                playing: false
-            }
-
-            VideoOutput {
-                source: video
+            Loader {
+                id: videoLivePreview
                 anchors.fill: parent
-                fillMode: VideoOutput.PreserveAspectCrop
+                source: runtime.skin.settings.videoLivePreview ? "VideoViewLivePreview.qml" : ""
+                onLoaded: item.sourceUri = delegate.filepath
             }
         }
     }
