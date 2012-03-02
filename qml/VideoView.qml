@@ -26,7 +26,7 @@ FocusScope {
     opacity: 0
     visible: false
 
-    property alias mediaModel: pictureModel
+    property alias mediaModel: videoModel
 
     signal back()
 
@@ -53,7 +53,7 @@ FocusScope {
     ]
 
     MediaModel {
-        id: pictureModel
+        id: videoModel
         mediaType: "video"
         structure: "fileName"
     }
@@ -129,13 +129,14 @@ FocusScope {
         Image {
             source: "../images/simple_blue_widescreen.png"
             anchors.fill: parent
+            cache: false
         }
 
         GridView {
             id: gridView
             anchors.fill: parent
             flow: GridView.TopToBottom
-            model: pictureModel
+            model: videoModel
             cellHeight: 256
             cellWidth: 256
             currentIndex: 0
@@ -196,5 +197,5 @@ FocusScope {
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()
     Keys.onDownPressed: gridView.moveCurrentIndexDown()
-    Keys.onEnterPressed: matinee.mediaPlayer.playForeground(pictureModel, gridView.currentIndex+1)
+    Keys.onEnterPressed: matinee.mediaPlayer.playForeground(videoModel, gridView.currentIndex+1)
 }
