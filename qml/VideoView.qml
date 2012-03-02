@@ -182,14 +182,14 @@ FocusScope {
             }
         }
 
-                Rectangle {
-                    anchors.fill: parent
-                    gradient: Gradient {
-                        GradientStop { position: 0.0; color: "transparent" }
-                            GradientStop { position: 0.85; color: "transparent" }
-                        GradientStop { position: 1.0; color: "#aa00B1F2" }
-                    }
-                }
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: "transparent" }
+                GradientStop { position: 0.85; color: "transparent" }
+                GradientStop { position: 1.0; color: "#aa00B1F2" }
+            }
+        }
     }
 
     Keys.onMenuPressed: root.back()
