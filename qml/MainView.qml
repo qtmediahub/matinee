@@ -80,16 +80,20 @@ FocusScope {
             name: "videoInactive"
             PropertyChanges {
                 target: rootRot2
-                angle: 50
+                angle: 60
             }
             PropertyChanges {
                 target: root
                 scale: 0.8
-                opacity: 0.5
+                opacity: 0.3
             }
             PropertyChanges {
                 target: rootRot
                 angle: 0
+            }
+            PropertyChanges {
+                target: mainViewBackground
+                opacity: 0
             }
         }
     ]
@@ -108,6 +112,7 @@ FocusScope {
         anchors.fill: parent
 
         Image {
+            id: mainViewBackground
             anchors.fill: parent
             source: "../images/air.jpg"
             smooth: true

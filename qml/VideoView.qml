@@ -60,7 +60,7 @@ FocusScope {
 
     ShaderEffectSource {
         id: theSource
-        sourceItem: gridView
+        sourceItem: videoWall
         smooth: true
         hideSource: true
     }
@@ -121,54 +121,74 @@ FocusScope {
         "
     }
 
-    GridView {
-        id: gridView
+
+    Item {
+        id: videoWall
         anchors.fill: parent
-        flow: GridView.TopToBottom
-        model: pictureModel
-        cellHeight: 256
-        cellWidth: 256
-        currentIndex: 0
-        highlightRangeMode: GridView.StrictlyEnforceRange
-        preferredHighlightBegin: height/2
-        preferredHighlightEnd: height/2
-        highlightMoveDuration: 1000
-        delegate: Image {
-            id: delegate
-            width: GridView.view.cellWidth
-            height: GridView.view.cellHeight
-            sourceSize.width: GridView.view.cellWidth
-            source: model.previewUrl
-            scale: GridView.isCurrentItem ? 1.5 : 1.0
-            z: GridView.isCurrentItem ? 2 : 1
-            smooth: true
-            transformOrigin: index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
 
-            property variant filepath: model.filepath
+        Image {
+            source: "../images/simple_blue_widescreen.png"
+            anchors.fill: parent
+        }
 
-            Behavior on scale {
-                NumberAnimation {}
-            }
+        GridView {
+            id: gridView
+            anchors.fill: parent
+            flow: GridView.TopToBottom
+            model: pictureModel
+            cellHeight: 256
+            cellWidth: 256
+            currentIndex: 0
+            highlightRangeMode: GridView.StrictlyEnforceRange
+            preferredHighlightBegin: height/2
+            preferredHighlightEnd: height/2
+            highlightMoveDuration: 1000
+            delegate: Image {
+                id: delegate
+                width: GridView.view.cellWidth-20
+                height: GridView.view.cellHeight-20
+                sourceSize.width: GridView.view.cellWidth
+                source: model.previewUrl
+                scale: GridView.isCurrentItem ? 1.5 : 1.0
+                z: GridView.isCurrentItem ? 2 : 1
+                smooth: true
+                transformOrigin: index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
 
-            property bool isActive: GridView.isCurrentItem
+                property variant filepath: model.filepath
 
-            onIsActiveChanged: {
-                if (videoLivePreview.status !== Loader.Ready)
-                    return;
+                Behavior on scale {
+                    NumberAnimation {}
+                }
 
-                if (isActive)
-                    videoLivePreview.item.play()
-                else
-                    videoLivePreview.item.pause()
-            }
+                property bool isActive: GridView.isCurrentItem
 
-            Loader {
-                id: videoLivePreview
-                anchors.fill: parent
-                source: runtime.skin.settings.videoLivePreview ? "VideoViewLivePreview.qml" : ""
-                onLoaded: item.sourceUri = delegate.filepath
+                onIsActiveChanged: {
+                    if (videoLivePreview.status !== Loader.Ready)
+                        return;
+
+                    if (isActive)
+                        videoLivePreview.item.play()
+                    else
+                        videoLivePreview.item.pause()
+                }
+
+                Loader {
+                    id: videoLivePreview
+                    anchors.fill: parent
+                    source: runtime.skin.settings.videoLivePreview ? "VideoViewLivePreview.qml" : ""
+                    onLoaded: item.sourceUri = delegate.filepath
+                }
             }
         }
+
+                Rectangle {
+                    anchors.fill: parent
+                    gradient: Gradient {
+                        GradientStop { position: 0.0; color: "transparent" }
+                            GradientStop { position: 0.85; color: "transparent" }
+                        GradientStop { position: 1.0; color: "#aa00B1F2" }
+                    }
+                }
     }
 
     Keys.onMenuPressed: root.back()
