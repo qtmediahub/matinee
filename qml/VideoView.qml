@@ -179,6 +179,8 @@ FocusScope {
                 GradientStop { position: 0.85; color: "transparent" }
                 GradientStop { position: 1.0; color: "#aa00B1F2" }
             }
+            opacity: matinee.mediaPlayer.active ? 0 : 1
+            Behavior on opacity { NumberAnimation {} }
         }
     }
 
