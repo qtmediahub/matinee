@@ -73,7 +73,7 @@ FocusScope {
         height: parent.height
         contentWidth: myGrid.width
         contentHeight: myGrid.height
-        contentY: repeaterView.itemAt(root.currentIndex).y-(height/2-myGrid.cellSize/2)
+        contentY:  repeaterView.itemAt(root.currentIndex) ? repeaterView.itemAt(root.currentIndex).y-(height/2-myGrid.cellSize/2) : 0
 
         Behavior on contentY {
             NumberAnimation { duration: 1000; easing.type: Easing.OutExpo}
