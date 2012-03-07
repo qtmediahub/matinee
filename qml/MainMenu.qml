@@ -107,5 +107,9 @@ FocusScope {
         Keys.onRightPressed: pathView.incrementCurrentIndex();
         Keys.onLeftPressed: pathView.decrementCurrentIndex();
         Keys.onEnterPressed: root.activateView(mainMenuModel.get(pathView.currentIndex).mediaType);
+        Keys.onMenuPressed: {
+            if (matinee.mediaPlayer.active)
+                matinee.mediaPlayer.showForeground()
+        }
     }
 }

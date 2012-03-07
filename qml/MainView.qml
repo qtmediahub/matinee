@@ -60,6 +60,10 @@ FocusScope {
                 target: shaderEffect1
                 factor: 1
             }
+            PropertyChanges {
+                target: root
+                opacity: 0
+            }
         },
         State {
             name: "pictureInactive"
@@ -95,6 +99,13 @@ FocusScope {
                 target: mainViewBackground
                 opacity: 0
             }
+        },
+        State {
+            name: "avplayerInactive"
+            PropertyChanges {
+                target: root
+                opacity: 0
+            }
         }
     ]
 
@@ -118,6 +129,8 @@ FocusScope {
             smooth: true
             cache: false
             sourceSize.width: parent.width
+            opacity: matinee.mediaPlayer.playing ? 0 : 1
+            Behavior on opacity { NumberAnimation {} }
         }
 
         PreviewList {
@@ -222,9 +235,9 @@ FocusScope {
             smooth: true
             hideSource: true
         }
-	
-	// bogus on raspberry pi
-	property real newWidth: width
+
+        // bogus on raspberry pi
+        property real newWidth: width
 
         vertexShader: "
             uniform lowp mat4 qt_Matrix;

@@ -24,7 +24,6 @@ FocusScope {
     width: 800
     height: 480
     opacity: 0
-    visible: false
 
     property alias mediaModel: videoModel
 
@@ -32,23 +31,12 @@ FocusScope {
 
     states: State {
         name: "active"
-        PropertyChanges { target: root; opacity: 1; visible: true }
+        PropertyChanges { target: root; opacity: 1; }
     }
 
     transitions: [
         Transition {
-            to: ""
-            SequentialAnimation {
-                PauseAnimation { duration: 2000 }
-                PropertyAction { properties: "opacity, visible" }
-            }
-        },
-        Transition {
-            to: "active"
-            SequentialAnimation {
-                PropertyAction { properties: "visible" }
-                NumberAnimation { property: "opacity"; duration: 2000 }
-            }
+            NumberAnimation { property: "opacity"; duration: 800 }
         }
     ]
 
@@ -130,6 +118,8 @@ FocusScope {
             source: "../images/simple_blue_widescreen.png"
             anchors.fill: parent
             cache: false
+            opacity: matinee.mediaPlayer.active ? 0 : 1
+            Behavior on opacity { NumberAnimation {} }
         }
 
         GridView {

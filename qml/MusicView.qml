@@ -65,6 +65,8 @@ FocusScope {
         source: "../images/stripes.png"
         cache: false
         sourceSize.width: parent.width
+        opacity: matinee.mediaPlayer.active ? 0 : 1
+        Behavior on opacity { NumberAnimation {} }
     }
 
     Flickable {

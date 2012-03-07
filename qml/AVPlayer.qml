@@ -25,7 +25,18 @@ import AbstractMediaPlayer 1.0
 QMHPlayer {
     id: root
 
+    property variant savedView: matinee.mainMenuView
+    property bool active: playing || paused
+
+    function showForeground() {
+        matinee.activeView.state = ""
+        matinee.mainMenuView.state = "avplayerInactive"
+        savedView = matinee.activeView
+        root.focus = true
+    }
+
     function playForeground(mediaModel, row) {
+        root.showForeground()
         root.play(mediaModel, row)
     }
 
@@ -37,12 +48,16 @@ QMHPlayer {
     Keys.onLeftPressed: seekBackward();
     Keys.onEnterPressed: togglePlayPause();
     Keys.onSpacePressed: togglePlayPause();
+    Keys.onMenuPressed: {
+        matinee.showView(root.savedView)
+        matinee.activeView.focus = true;
+    }
 
     Rectangle {
         id: backgroundFiller
         anchors.fill: parent
         color: "black"
-        opacity: root.playing ? 0 : 1
+        opacity: root.playing || root.paused ? 0 : 1
 
         Behavior on opacity {
             NumberAnimation {}

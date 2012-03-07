@@ -35,6 +35,7 @@ Item {
         property int smallFont: matinee.width / 70
 
         property variant activeView: mainView
+        property variant mainMenuView: mainView
         property alias mediaPlayer: mediaPlayer
 
         Rectangle {
