@@ -36,7 +36,7 @@ Item {
 
         property variant activeView: mainView
         property variant mainMenuView: mainView
-        property alias mediaPlayer: mediaPlayer
+        property alias mediaPlayer: mediaPlayerContainer.mediaPlayer
 
         Rectangle {
             anchors.fill: parent
@@ -69,8 +69,8 @@ Item {
             matinee.activeView.forceActiveFocus()
         }
 
-        AVPlayer {
-            id: mediaPlayer
+        MediaPlayerContainer {
+            id: mediaPlayerContainer
             anchors.fill: parent
         }
 
