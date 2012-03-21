@@ -18,108 +18,99 @@
 
 import QtQuick 2.0
 
-Item {
-    id: window
-    width: 1920
-    height: 1080
+FocusScope {
+    id: matinee
+    transformOrigin: Item.TopLeft
 
-    FocusScope {
-        id: matinee
-        width: 1280
-        height: 720
-        scale: window.width/width
-        transformOrigin: Item.TopLeft
+    property int bigFont: matinee.width / 25
+    property int mediumFont: matinee.width / 50
+    property int smallFont: matinee.width / 70
 
-        property int bigFont: matinee.width / 25
-        property int mediumFont: matinee.width / 50
-        property int smallFont: matinee.width / 70
+    property variant activeView: mainView
+    property variant mainMenuView: mainView
+    property alias mediaPlayer: mediaPlayerContainer.mediaPlayer
 
-        property variant activeView: mainView
-        property variant mainMenuView: mainView
-        property alias mediaPlayer: mediaPlayerContainer.mediaPlayer
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+    }
 
-        Rectangle {
-            anchors.fill: parent
-            color: "black"
+    function showView(view) {
+        if (view == mainView) {
+            matinee.activeView.state = ""
+            matinee.activeView = view
+            matinee.activeView.state = ""
+        } else if (view === videoView) {
+            matinee.activeView.state = "videoInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
+        } else if (view === pictureView) {
+            matinee.activeView.state = "pictureInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
+        } else if (view === musicView) {
+            matinee.activeView.state = "musicInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
+        } else if (view === radioView) {
+            matinee.activeView.state = "pictureInactive"
+            matinee.activeView = view
+            matinee.activeView.state = "active"
         }
 
-        function showView(view) {
-            if (view == mainView) {
-                matinee.activeView.state = ""
-                matinee.activeView = view
-                matinee.activeView.state = ""
-            } else if (view === videoView) {
-                matinee.activeView.state = "videoInactive"
-                matinee.activeView = view
-                matinee.activeView.state = "active"
-            } else if (view === pictureView) {
-                matinee.activeView.state = "pictureInactive"
-                matinee.activeView = view
-                matinee.activeView.state = "active"
-            } else if (view === musicView) {
-                matinee.activeView.state = "musicInactive"
-                matinee.activeView = view
-                matinee.activeView.state = "active"
-            } else if (view === radioView) {
-                matinee.activeView.state = "pictureInactive"
-                matinee.activeView = view
-                matinee.activeView.state = "active"
-            }
+        matinee.activeView.forceActiveFocus()
+    }
 
-            matinee.activeView.forceActiveFocus()
-        }
+    MediaPlayerContainer {
+        id: mediaPlayerContainer
+        anchors.fill: parent
+    }
 
-        MediaPlayerContainer {
-            id: mediaPlayerContainer
-            anchors.fill: parent
-        }
+    PictureView {
+        id: pictureView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
 
-        PictureView {
-            id: pictureView
-            anchors.fill: parent
-            onBack: matinee.showView(mainView)
-        }
+    VideoView {
+        id: videoView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
 
-        VideoView {
-            id: videoView
-            anchors.fill: parent
-            onBack: matinee.showView(mainView)
-        }
+    MainView {
+        id: mainView
+        anchors.fill: parent
 
-        MainView {
-            id: mainView
-            anchors.fill: parent
-
-            onActivateView: {
-                if (type === "music") {
-                    matinee.showView(musicView);
-                } else if (type === "picture") {
-                    matinee.showView(pictureView);
-                } else if (type === "video") {
-                    matinee.showView(videoView);
-                }/* else if (type === "radio") {
+        onActivateView: {
+            if (type === "music") {
+                matinee.showView(musicView);
+            } else if (type === "picture") {
+                matinee.showView(pictureView);
+            } else if (type === "video") {
+                matinee.showView(videoView);
+            }/* else if (type === "radio") {
                     matinee.showView(radioView);
                 }*/
-            }
-        }
-
-        MusicView {
-            id: musicView
-            anchors.fill: parent
-            onBack: matinee.showView(mainView)
-        }
-
-        RadioView {
-            id: radioView
-            anchors.fill: parent
-            onBack: matinee.showView(mainView)
         }
     }
 
+    MusicView {
+        id: musicView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
+
+    RadioView {
+        id: radioView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
+
     Component.onCompleted: {
-//        runtime.mediaScanner.addSearchPath("music", "/home/jzellner/minimal_media/music/", "music");
-//        runtime.mediaScanner.addSearchPath("video", "/home/jzellner/minimal_media/video/", "video");
-//        runtime.mediaScanner.addSearchPath("picture", "/home/jzellner/minimal_media/picture/", "picture");
+        //        runtime.mediaScanner.addSearchPath("music", "/home/jzellner/minimal_media/music/", "music");
+        //        runtime.mediaScanner.addSearchPath("video", "/home/jzellner/minimal_media/video/", "video");
+        //        runtime.mediaScanner.addSearchPath("picture", "/home/jzellner/minimal_media/picture/", "picture");
     }
 }
 
