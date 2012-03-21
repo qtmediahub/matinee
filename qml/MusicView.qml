@@ -28,8 +28,6 @@ FocusScope {
 
     signal back()
 
-    property bool currentIndexSelected: false
-
     states: State {
         name: "active"
         PropertyChanges { target: root; opacity: 1; visible: true }
@@ -73,196 +71,83 @@ FocusScope {
         Behavior on opacity { NumberAnimation {} }
     }
 
-    GridView {
-        id: gridView
+    ListView {
+        id: listView
         anchors.fill: parent
-        anchors.margins: 50
-        cellHeight: 300
-        cellWidth: cellHeight
+        anchors.leftMargin: 50
+        anchors.rightMargin: 50
         model: musicModel
         focus: true
 
-        delegate: Item {
+        // FIXME!
+        onCurrentIndexChanged: {
+            trackModel.back()
+            trackModel.enter(currentIndex)
+        }
+
+        delegate: Rectangle {
             id: delegate
-            width: gridView.cellHeight
-            height: width
-            z: delegate.GridView.isCurrentItem ? 2 : 0
+            width: listView.width
+            height: (ListView.isCurrentItem ? delegateListView.height : 0) + cover.height
 
-            Item {
-                id: viewDelegate
+            color: index % 2 ? "#88000000" : "#881A6289"
+            clip: true
+            opacity: ListView.isCurrentItem ? 1 : 0.6
 
-                property real swing: 0
+            Behavior on height {
+                NumberAnimation { easing.type: Easing.OutBack; duration: 500 }
+            }
 
-                width: parent.width/1.2
-                height: width
-                anchors.centerIn: parent
-                smooth: true
-                opacity: 0.4
-                scale: 1
-                z: 0
-                state: delegate.GridView.isCurrentItem ? (root.currentIndexSelected ? "active" : "selected") : ""
+            Row {
+                id: delegateRow
+                anchors.top: parent.top
+                height: cover.height
+                width: parent.width
 
-                states: [
-                    State {
-                        name: "selected"
-                        PropertyChanges {
-                            target: viewDelegate
-                            swing: 0
-                            scale: 1.2
-                            opacity: 1
-                            z: 2
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation
-                            angle: 360
-                        }
-                    },
-                    State {
-                        name: "active"
-                        PropertyChanges {
-                            target: viewDelegate
-                            swing: 120
-                            scale: 2
-                            opacity: 1
-                            z: 2
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation
-                            angle: 360
-                        }
-                        PropertyChanges {
-                            target: viewDelegateRotation2
-                            angle: 0
-                        }
-                        PropertyChanges {
-                            target: discContent
-                            opacity: 1
-                        }
-                    }
-                ]
-
-                transitions: [
-                    Transition {
-                        to: ""
-                        NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
-                    },
-                    Transition {
-                        SequentialAnimation {
-                            NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
-                            NumberAnimation { target: discContent; property: "opacity" }
-                        }
-                    }
-                ]
-
-                Rectangle {
-                    id: discContent
-                    color: "#111111"
-                    anchors.fill: parent
-                    opacity: 0
-
-                    Text {
-                        id: discContentTitle
-                        anchors.top: parent.top
-                        anchors.left: parent.left
-                        anchors.leftMargin: 40
-                        anchors.topMargin: 40
-                        width: parent.width
-                        text: model.artist
-                        color: "steelblue"
-                        elide: Text.ElideRight
-                    }
-
-                    ListView {
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        anchors.top: discContentTitle.bottom
-                        anchors.margins: 10
-                        model: trackModel
-                        clip: true
-
-                        delegate: Text {
-                            width: parent.width
-                            opacity: model.dotdot ? 0 : 1
-                            text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
-                            color: "white"
-                        }
-                    }
+                Image {
+                    id: cover
+                    width: 128
+                    height: width
+                    source: model.thumbnail
+                    smooth: true
                 }
 
-                Item {
-                    id: discCover
-                    anchors.fill: parent
-
-                    Rectangle {
-                        anchors.fill: parent
-                        color: "#222222"
-                    }
-
-                    transform: [
-                        Rotation {
-                            axis { x: 0; y: 1; z: 0 }
-                            angle: viewDelegate.swing
-                            origin { x: viewDelegate.width; y: viewDelegate.height/2; }
-                        }
-                    ]
-
-                    Image {
-                        id: discCoverImage
-                        anchors.fill: parent
-                        anchors.margins: 10
-                        smooth: true
-                        source: {
-                            if (model.dotdot) return "../images/folder-music.png"
-                            else if (model.previewUrl == "" ) return ""
-                            else return model.previewUrl
-                        }
-
-                        transform: [
-                            Rotation {
-                                axis { x: 0; y: 1; z: 0 }
-                                angle: viewDelegate.swing < 90 ? 0 : 180
-                                origin { x: discCoverImage.width/2; y: discCoverImage.height/2; }
-                            }
-                        ]
-                    }
+                Text {
+                    id: artist
+                    text: model.artist
+                    color: "white"
+                    elide: Text.ElideRight
+                    font.pixelSize: 32
                 }
+            }
 
-                transform: [
-                    Rotation {
-                        id: viewDelegateRotation
-                        axis { x: 1; y: 0; z: 0 }
-                        angle: 0
-                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
-                    },
-                    Rotation {
-                        id: viewDelegateRotation2
-                        axis { x: 0; y: 0; z: 1 }
-                        angle: 30-Math.random()*60
-                        origin { x: viewDelegate.width/2; y: viewDelegate.height/2; }
-                        Behavior on angle {
-                            SpringAnimation { spring: 2; damping: 0.2; }
-                        }
-                    }
-                ]
+            ListView {
+                id: delegateListView
+                anchors.top: delegateRow.bottom
+                x: 150
+                width: parent.width
+                height: count * 25
+                model: trackModel
+                clip: true
+                opacity: delegate.ListView.isCurrentItem ? 1 : 0
+
+                Behavior on opacity { NumberAnimation { duration: 800 } }
+
+                delegate: Text {
+                    width: parent.width
+                    opacity: model.dotdot ? 0 : 1
+                    text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
+                    color: "white"
+                    font.pixelSize: 20
+                }
             }
         }
     }
 
     Keys.onMenuPressed: {
-        if (root.currentIndexSelected) {
-            root.currentIndexSelected = false
-        } else {
-            root.back()
-        }
+        root.back()
     }
     Keys.onEnterPressed: {
-        if (root.currentIndexSelected) {
-            trackModel.back()
-            root.currentIndexSelected = false
-        } else {
-            trackModel.enter(root.currentIndex)
-            root.currentIndexSelected = true
-        }
+        matinee.mediaPlayer.playForeground(trackModel, 1)
     }
 }
