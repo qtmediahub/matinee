@@ -60,6 +60,12 @@ FocusScope {
         structure: "artist|title"
     }
 
+    MediaModel {
+        id: trackModel
+        mediaType: "music"
+        structure: "artist|title"
+    }
+
     Image {
         anchors.fill: parent
         source: "../images/stripes.png"
@@ -141,16 +147,26 @@ FocusScope {
                                 target: viewDelegateRotation2
                                 angle: 0
                             }
+                            PropertyChanges {
+                                target: discContent
+                                opacity: 1
+                            }
                         }
                     ]
 
                     transitions: [
                         Transition {
                             to: ""
-                            NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
+                            SequentialAnimation {
+                                NumberAnimation { target: discContent; property: "opacity" }
+                                NumberAnimation { properties: "opacity, scale, x, y, swing"; duration: 500; }
+                            }
                         },
                         Transition {
-                            NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
+                            SequentialAnimation {
+                                NumberAnimation { properties: "opacity, scale, x, y, angle, swing"; duration: 500; }
+                                NumberAnimation { target: discContent; property: "opacity" }
+                            }
                         }
                     ]
 
@@ -158,19 +174,34 @@ FocusScope {
                         id: discContent
                         color: "#111111"
                         anchors.fill: parent
+                        opacity: 0
 
-                        Image {
-                            source: "../images/media-optical.png"
-                            anchors.fill: parent
-                            smooth: true
+                        Text {
+                            id: discContentTitle
+                            anchors.top: parent.top
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.topMargin: 40
+                            text: model.artist
+                            color: "steelblue"
+                        }
 
-                            Text {
-                                id: discContentTitle
-                                anchors.top: parent.top
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                anchors.topMargin: 40
-                                text: model.artist
-                                color: "steelblue"
+                        ListView {
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            anchors.top: discContentTitle.bottom
+                            anchors.margins: 10
+
+                            model: trackModel
+                            clip: true
+
+                            delegate: Text {
+                                width: parent.width
+                                horizontalAlignment: Text.AlignHCenter
+                                opacity: model.dotdot ? 0 : 1
+                                text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
+                                color: "white"
+                                font.pixelSize: 12
                             }
                         }
                     }
@@ -254,8 +285,10 @@ FocusScope {
     }
     Keys.onEnterPressed: {
         if (root.currentIndexSelected) {
+            trackModel.back()
             root.currentIndexSelected = false
         } else {
+            trackModel.enter(root.currentIndex)
             root.currentIndexSelected = true
         }
     }
