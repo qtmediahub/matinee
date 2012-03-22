@@ -59,7 +59,7 @@ FocusScope {
     MediaModel {
         id: trackModel
         mediaType: "music"
-        structure: "artist|title"
+        structure: "title"
     }
 
     Image {
@@ -79,20 +79,25 @@ FocusScope {
         model: musicModel
         focus: true
 
-        // FIXME!
         onCurrentIndexChanged: {
-            trackModel.back()
-            trackModel.enter(currentIndex)
+            trackModel.sqlCondition = "\"artist\" = \"" + listView.currentItem.artist + "\""
         }
 
         delegate: Rectangle {
             id: delegate
+
+            property string artist: model.artist
+
             width: listView.width
             height: (ListView.isCurrentItem ? delegateListView.height : 0) + cover.height
-
-            color: index % 2 ? "#88000000" : "#881A6289"
             clip: true
             opacity: ListView.isCurrentItem ? 1 : 0.6
+            gradient: Gradient {
+                GradientStop { position: 0; color: index % 2 ? "#aa000000" : "#aa1A6289" }
+                GradientStop { position: 0.2; color: index % 2 ? "#bb000000" : "#bb1A6289" }
+                GradientStop { position: 1; color: "#00000000" }
+            }
+
 
             Behavior on height {
                 NumberAnimation { easing.type: Easing.OutBack; duration: 500 }
