@@ -59,7 +59,7 @@ FocusScope {
     MediaModel {
         id: trackModel
         mediaType: "music"
-        structure: "title"
+        structure: "album|title"
     }
 
     Image {
@@ -131,19 +131,35 @@ FocusScope {
                 anchors.top: delegateRow.bottom
                 x: 150
                 width: parent.width
-                height: count * 25
+                height: count * 64
                 model: trackModel
                 clip: true
                 opacity: delegate.ListView.isCurrentItem ? 1 : 0
 
                 Behavior on opacity { NumberAnimation { duration: 800 } }
 
-                delegate: Text {
+                delegate: Item {
                     width: parent.width
+                    height: 64
                     opacity: model.dotdot ? 0 : 1
-                    text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
-                    color: "white"
-                    font.pixelSize: 20
+
+                    Image {
+                        id: delegateAlbumIcon
+                        source: model.previewUrl
+                        width: 64
+                        height: width
+                        smooth: true
+                    }
+
+                    Text {
+                        anchors.left: delegateAlbumIcon.right
+                        anchors.leftMargin: 20
+                        anchors.verticalCenter: delegateAlbumIcon.verticalCenter
+    //                    text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
+                        text: model.album
+                        color: "white"
+                        font.pixelSize: 20
+                    }
                 }
             }
         }
