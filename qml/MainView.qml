@@ -225,6 +225,8 @@ FocusScope {
     ShaderEffect {
         id: shaderEffect1
         anchors.fill: parent
+        visible: runtime.skin.settings.fancy
+
         mesh: GridMesh {
             resolution: Qt.size(20, 20)
         }
@@ -233,7 +235,7 @@ FocusScope {
             id: shaderEffectSource1
             sourceItem: container
             smooth: true
-            hideSource: true
+            hideSource: runtime.skin.settings.fancy
         }
 
         // bogus on raspberry pi
