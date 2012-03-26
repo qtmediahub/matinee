@@ -65,7 +65,7 @@ FocusScope {
 
     Image {
         anchors.fill: parent
-        source: "../images/stripes.png"
+        source: "../images/air.jpg"
         cache: false
         sourceSize.width: parent.width
         opacity: matinee.mediaPlayer.active ? 0 : 1
