@@ -89,8 +89,8 @@ Rectangle {
         acceleration: PointDirection {xVariation: 10; yVariation: 10;}
         speedFromMovement: 8
 
-        size: 22
-        sizeVariation: 4
+        size: 40
+        sizeVariation: 10
     }
     ParticleSystem { id: sys3; }
     ImageParticle {
@@ -130,7 +130,7 @@ Rectangle {
         speed: PointDirection {xVariation: 4; yVariation: 4;}
         acceleration: PointDirection {xVariation: 10; yVariation: 10;}
 
-        size: 12
+        size: 20
         sizeVariation: 4
     }
     ParticleSystem { id: sys4; }
@@ -170,7 +170,7 @@ Rectangle {
         speed: PointDirection {xVariation: 2; yVariation: 2;}
         acceleration: PointDirection {xVariation: 10; yVariation: 10;}
 
-        size: 22
+        size: 40
         sizeVariation: 4
     }
 
@@ -180,8 +180,8 @@ Rectangle {
 
     Item {
         id: circle
-        //anchors.fill: parent
-        property real radius: 0
+        anchors.fill: parent
+        property real radius: 100
         property real dx: root.width / 2
         property real dy: root.height / 2
         property real cx: radius * Math.sin(percent*6.283185307179) + dx
@@ -240,7 +240,7 @@ Rectangle {
 
     Item {
         id: circle2
-        property real radius: 30
+        property real radius: 50
         property real dx: circle3.cx
         property real dy: circle3.cy
         property real cx: radius * Math.sin(percent*6.283185307179) + dx

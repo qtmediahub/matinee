@@ -60,6 +60,7 @@ FocusScope {
         id: trackModel
         mediaType: "music"
         structure: "album|track,title"
+        dotDotPosition: MediaModel.End
     }
 
     Image {
@@ -107,44 +108,65 @@ FocusScope {
             property alias albumGridView: albumGridView
 
             width: listView.width
-            height: (delegate.active ? albumGridView.height : 0) + cover.height
+            height: albumGridView.height + cover.height + cover.anchors.margins*2
             clip: true
             opacity: ListView.isCurrentItem ? 1 : 0.4
             color: ListView.isCurrentItem ? "#44000000" : "#00000000"
+            state: active ? "active" : ""
 
             Behavior on color { ColorAnimation { duration: 500 } }
             Behavior on opacity { NumberAnimation {} }
             Behavior on height { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
 
-            Row {
-                id: delegateRow
+            states : [
+                State {
+                    name: "active"
+                    AnchorChanges { target: artistText; anchors.top: cover.top; anchors.verticalCenter: undefined }
+                    PropertyChanges { target: albumText; opacity: 0.5 }
+                }
+            ]
+
+            transitions: [
+                Transition {
+                    AnchorAnimation { }
+                    NumberAnimation { }
+                }
+            ]
+
+            Image {
+                id: cover
+                width: 128
+                height: width
                 anchors.top: parent.top
-                height: cover.height
-                width: parent.width
+                anchors.left: parent.left
+                anchors.margins: 10
+                source: model.previewUrl != "" ? model.previewUrl : "../images/default-media.png"
+                smooth: true
+            }
 
-                Image {
-                    id: cover
-                    width: 128
-                    height: width
-                    source: model.previewUrl != "" ? model.previewUrl : "../images/default-media.png"
-                    smooth: true
-                }
+            MatineeMediumText {
+                id: artistText
+                anchors.verticalCenter: cover.verticalCenter
+                anchors.left: cover.right
+                anchors.margins: 10
+                text: model.artist
+            }
 
-                Text {
-                    id: artist
-                    text: model.artist
-                    color: "white"
-                    elide: Text.ElideRight
-                    font.pixelSize: 32
-                }
+            MatineeMediumText {
+                id: albumText
+                anchors.top: artistText.bottom
+                anchors.left: cover.right
+                anchors.margins: 10
+                opacity: 0
+                text: trackModel.part != "album" && albumGridView.currentItem ? albumGridView.currentItem.album : albumGridView.count + " albums by this artist"
             }
 
             GridView {
                 id: albumGridView
-                anchors.top: delegateRow.bottom
+                anchors.top: cover.bottom
                 x: 150
                 width: parent.width
-                height: Math.ceil(count/2.0) * cellHeight
+                height: delegate.active ? Math.ceil(count/2.0) * cellHeight : 0
                 model: trackModel
                 clip: true
                 opacity: delegate.active ? 1 : 0
@@ -160,7 +182,7 @@ FocusScope {
                         trackModel.enter(albumGridView.currentIndex)
                         albumGridView.currentIndex = 0
                     } else {
-                        matinee.mediaPlayer.playForeground(trackModel, albumGridView.currentIndex)
+                        matinee.mediaPlayer.playBackground(trackModel, albumGridView.currentIndex)
                     }
                 }
 
@@ -182,6 +204,9 @@ FocusScope {
                 Keys.onDownPressed: moveCurrentIndexDown()
 
                 delegate: Item {
+
+                    property string album: model.album ? model.album : ""
+
                     width: GridView.view.cellWidth
                     height: GridView.view.cellHeight
                     opacity: GridView.isCurrentItem ? 1 : 0.5
@@ -197,15 +222,12 @@ FocusScope {
                         smooth: true
                     }
 
-                    Text {
+                    MatineeMediumText {
                         width: parent.width - anchors.leftMargin - delegateAlbumIcon.width
                         anchors.left: delegateAlbumIcon.right
                         anchors.leftMargin: 20
                         anchors.verticalCenter: parent.verticalCenter
                         text: model.dotdot ? "back" : trackModel.part == "album" ? model.album : (model.track ? model.track : "") + " " + model.title
-                        color: "white"
-                        font.pixelSize: 20
-                        elide: Text.ElideRight
                     }
                 }
             }

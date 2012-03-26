@@ -40,6 +40,10 @@ QMHPlayer {
         root.play(mediaModel, row)
     }
 
+    function playBackground(mediaModel, row) {
+        root.play(mediaModel, row)
+    }
+
     anchors.fill: parent
 
     Keys.onUpPressed: playPrevious();
@@ -62,6 +66,11 @@ QMHPlayer {
         Behavior on opacity {
             NumberAnimation {}
         }
+    }
+
+    MusicParticles {
+        anchors.fill: parent
+        visible: root.active && !root.hasVideo
     }
 
     onStatusChanged: {
