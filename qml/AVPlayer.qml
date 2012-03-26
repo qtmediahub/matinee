@@ -74,7 +74,6 @@ QMHPlayer {
     }
 
     onStatusChanged: {
-        print("status change: "+status)
         if (status == AbstractMediaPlayer.EndOfMedia)
             playNext();
     }
