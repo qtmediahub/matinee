@@ -59,7 +59,7 @@ Item {
         id: theSource
         sourceItem: previewView
         smooth: true
-        hideSource: true
+        hideSource: runtime.skin.settings.fancy
     }
 
     ShaderEffect {
@@ -68,6 +68,7 @@ Item {
         height: theSource.sourceItem.height
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
+        visible: runtime.skin.settings.fancy
 
         transform: Scale {
             origin.x: parent.width
@@ -126,6 +127,7 @@ Item {
         id: theSource2
         sourceItem: shaderEffect1
         smooth: true
+        hideSource: false
     }
 
     ShaderEffect {
@@ -133,6 +135,7 @@ Item {
         height: theSource2.sourceItem.height/2.0
         anchors.right: parent.right
         anchors.top: shaderEffect1.bottom
+        visible: runtime.skin.settings.fancy
 
         transform: Scale {
             origin.x: parent.width
