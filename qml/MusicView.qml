@@ -114,7 +114,7 @@ FocusScope {
             color: ListView.isCurrentItem ? "#44000000" : "#00000000"
             state: active ? "active" : ""
 
-            Behavior on color { ColorAnimation { duration: 500 } }
+            Behavior on color { ColorAnimation {} }
             Behavior on opacity { NumberAnimation {} }
             Behavior on height { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
 
@@ -135,7 +135,7 @@ FocusScope {
 
             Image {
                 id: cover
-                width: 128
+                width: 64
                 height: width
                 anchors.top: parent.top
                 anchors.left: parent.left
@@ -148,7 +148,7 @@ FocusScope {
                 id: artistText
                 anchors.verticalCenter: cover.verticalCenter
                 anchors.left: cover.right
-                anchors.margins: 10
+                anchors.leftMargin: 10
                 text: model.artist
             }
 
@@ -156,7 +156,7 @@ FocusScope {
                 id: albumText
                 anchors.top: artistText.bottom
                 anchors.left: cover.right
-                anchors.margins: 10
+                anchors.leftMargin: 10
                 opacity: 0
                 text: trackModel.part != "album" && albumGridView.currentItem ? albumGridView.currentItem.album : albumGridView.count + " albums by this artist"
             }
@@ -165,13 +165,13 @@ FocusScope {
                 id: albumGridView
                 anchors.top: cover.bottom
                 x: 150
-                width: parent.width
+                width: parent.width - albumGridView.x
                 height: delegate.active ? Math.ceil(count/2.0) * cellHeight : 0
                 model: trackModel
                 clip: true
                 opacity: delegate.active ? 1 : 0
                 cellWidth: width/2.0
-                cellHeight: 64
+                cellHeight: trackModel.part == "album" ? 64 : 32
                 keyNavigationWraps: true
                 flow: GridView.TopToBottom
 
@@ -220,6 +220,7 @@ FocusScope {
                         width: height
                         height: parent.height-5
                         smooth: true
+                        visible: trackModel.part == "album"
                     }
 
                     MatineeMediumText {
