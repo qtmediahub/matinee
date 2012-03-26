@@ -59,7 +59,7 @@ FocusScope {
     MediaModel {
         id: trackModel
         mediaType: "music"
-        structure: "album|title"
+        structure: "album|track,title"
     }
 
     Image {
@@ -79,29 +79,42 @@ FocusScope {
         model: musicModel
         focus: true
 
-        onCurrentIndexChanged: {
+        Keys.onEnterPressed: {
             trackModel.sqlCondition = "\"artist\" = \"" + listView.currentItem.artist + "\""
+            listView.currentItem.active = true;
+            listView.currentItem.albumGridView.focus = true;
+        }
+
+        Keys.onMenuPressed: {
+            if (listView.currentItem.active) {
+                listView.currentItem.active = false;
+                listView.currentItem.albumGridView.focus = false;
+                listView.focus = true;
+            } else {
+                root.back();
+            }
+        }
+
+        Keys.onContext1Pressed: {
+            print("play artist")
         }
 
         delegate: Rectangle {
             id: delegate
 
             property string artist: model.artist
+            property bool active: false
+            property alias albumGridView: albumGridView
 
             width: listView.width
-            height: (ListView.isCurrentItem ? delegateListView.height : 0) + cover.height
+            height: (delegate.active ? albumGridView.height : 0) + cover.height
             clip: true
-            opacity: ListView.isCurrentItem ? 1 : 0.6
-            gradient: Gradient {
-                GradientStop { position: 0; color: index % 2 ? "#aa000000" : "#aa1A6289" }
-                GradientStop { position: 0.2; color: index % 2 ? "#bb000000" : "#bb1A6289" }
-                GradientStop { position: 1; color: "#00000000" }
-            }
+            opacity: ListView.isCurrentItem ? 1 : 0.4
+            color: ListView.isCurrentItem ? "#44000000" : "#00000000"
 
-
-            Behavior on height {
-                NumberAnimation { easing.type: Easing.OutBack; duration: 500 }
-            }
+            Behavior on color { ColorAnimation { duration: 500 } }
+            Behavior on opacity { NumberAnimation {} }
+            Behavior on height { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
 
             Row {
                 id: delegateRow
@@ -113,7 +126,7 @@ FocusScope {
                     id: cover
                     width: 128
                     height: width
-                    source: model.thumbnail
+                    source: model.previewUrl != "" ? model.previewUrl : "../images/default-media.png"
                     smooth: true
                 }
 
@@ -126,49 +139,76 @@ FocusScope {
                 }
             }
 
-            ListView {
-                id: delegateListView
+            GridView {
+                id: albumGridView
                 anchors.top: delegateRow.bottom
                 x: 150
                 width: parent.width
-                height: count * 64
+                height: Math.ceil(count/2.0) * cellHeight
                 model: trackModel
                 clip: true
-                opacity: delegate.ListView.isCurrentItem ? 1 : 0
+                opacity: delegate.active ? 1 : 0
+                cellWidth: width/2.0
+                cellHeight: 64
+                keyNavigationWraps: true
+                flow: GridView.TopToBottom
 
                 Behavior on opacity { NumberAnimation { duration: 800 } }
 
+                Keys.onEnterPressed: {
+                    if (trackModel.part == "album") {
+                        trackModel.enter(albumGridView.currentIndex)
+                        albumGridView.currentIndex = 0
+                    } else {
+                        matinee.mediaPlayer.playForeground(trackModel, albumGridView.currentIndex)
+                    }
+                }
+
+                Keys.onMenuPressed: {
+                    if (trackModel.part != "album") {
+                        trackModel.back()
+                        albumGridView.currentIndex = 0
+                    } else {
+                        event.accepted = false
+                    }
+                }
+
+                Keys.onContext1Pressed: {
+                    print("play album by context key "+albumGridView.currentIndex)
+                }
+
+                // we need to explicitly handle them
+                Keys.onUpPressed: moveCurrentIndexUp()
+                Keys.onDownPressed: moveCurrentIndexDown()
+
                 delegate: Item {
-                    width: parent.width
-                    height: 64
-                    opacity: model.dotdot ? 0 : 1
+                    width: GridView.view.cellWidth
+                    height: GridView.view.cellHeight
+                    opacity: GridView.isCurrentItem ? 1 : 0.5
 
                     Image {
                         id: delegateAlbumIcon
-                        source: model.previewUrl
-                        width: 64
-                        height: width
+                        source: (model.dotdot || model.previewUrl == "") ? "../images/default-media.png" : model.previewUrl
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.margins: 5
+                        width: height
+                        height: parent.height-5
                         smooth: true
                     }
 
                     Text {
+                        width: parent.width - anchors.leftMargin - delegateAlbumIcon.width
                         anchors.left: delegateAlbumIcon.right
                         anchors.leftMargin: 20
-                        anchors.verticalCenter: delegateAlbumIcon.verticalCenter
-    //                    text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
-                        text: model.album
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.dotdot ? "back" : trackModel.part == "album" ? model.album : (model.track ? model.track : "") + " " + model.title
                         color: "white"
                         font.pixelSize: 20
+                        elide: Text.ElideRight
                     }
                 }
             }
         }
-    }
-
-    Keys.onMenuPressed: {
-        root.back()
-    }
-    Keys.onEnterPressed: {
-        matinee.mediaPlayer.playForeground(trackModel, 1)
     }
 }
