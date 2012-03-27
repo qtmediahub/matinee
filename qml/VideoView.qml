@@ -43,7 +43,7 @@ FocusScope {
     MediaModel {
         id: videoModel
         mediaType: "video"
-        structure: "fileName"
+        structure: "show|season|title"
     }
 
     ShaderEffectSource {
@@ -127,8 +127,8 @@ FocusScope {
             anchors.fill: parent
             flow: GridView.TopToBottom
             model: videoModel
-            cellHeight: 256
-            cellWidth: 256
+            cellHeight: count < 6 ? height/2.0 : 256
+            cellWidth: cellHeight
             currentIndex: 0
             highlightRangeMode: GridView.StrictlyEnforceRange
             preferredHighlightBegin: height/2
@@ -136,14 +136,23 @@ FocusScope {
             highlightMoveDuration: 1000
             delegate: Image {
                 id: delegate
+
+                property bool isLeaf: model.isLeaf
+
                 width: GridView.view.cellWidth-20
                 height: GridView.view.cellHeight-20
                 sourceSize.width: GridView.view.cellWidth
-                source: model.previewUrl
-                scale: GridView.isCurrentItem ? 1.5 : 1.0
+                source: model.dotdot ? "../images/folder-video.png" : model.previewUrl ? model.previewUrl : "../images/default-media.png"
+                scale: GridView.isCurrentItem ? 1.2 : 1.0
                 z: GridView.isCurrentItem ? 2 : 1
                 smooth: true
-                transformOrigin: index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
+                transformOrigin: {
+                    if (GridView.view.count < 6) {
+                        return index%2 === 0 ? Item.Top : Item.Bottom;
+                    } else {
+                        return index%3 === 0 ? Item.Top : index%3 === 2 ? Item.Bottom : Item.Center
+                    }
+                }
 
                 property variant filepath: model.filepath
 
@@ -169,6 +178,25 @@ FocusScope {
                     source: runtime.skin.settings.videoLivePreview ? "VideoViewLivePreview.qml" : ""
                     onLoaded: item.sourceUri = delegate.filepath
                 }
+
+                Image {
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+                    anchors.margins: 10
+                    width: 64
+                    height: 64
+                    smooth: true
+                    source: "../images/folder-video.png"
+                    visible: !model.isLeaf && !model.isDotDot
+                }
+
+                GridView.onAdd: NumberAnimation {
+                    target: delegate
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    duration: 500
+                }
             }
         }
 
@@ -189,5 +217,12 @@ FocusScope {
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()
     Keys.onDownPressed: gridView.moveCurrentIndexDown()
-    Keys.onEnterPressed: matinee.mediaPlayer.playForeground(videoModel, gridView.currentIndex+1)
+    Keys.onEnterPressed: {
+        if (gridView.currentItem.isLeaf)
+            matinee.mediaPlayer.playForeground(videoModel, gridView.currentIndex+1)
+        else {
+            videoModel.enter(gridView.currentIndex)
+            gridView.currentIndex = 0
+        }
+    }
 }
