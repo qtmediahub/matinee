@@ -42,10 +42,11 @@ import QtQuick 2.0
 import QtQuick.Particles 2.0
 
 Rectangle {
+
     id: root
 
-    height: 1280
-    width: 720
+    height: 540
+    width: 360
     color: "black"
 
     ParticleSystem { id: sys2 }
@@ -168,10 +169,6 @@ Rectangle {
         size: 40
         sizeVariation: 4
     }
-
-
-
-    color: "white"
 
     Item {
         id: circle
