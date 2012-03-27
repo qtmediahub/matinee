@@ -143,7 +143,7 @@ FocusScope {
                 height: GridView.view.cellHeight-20
                 sourceSize.width: GridView.view.cellWidth
                 source: model.dotdot ? "../images/folder-video.png" : model.previewUrl ? model.previewUrl : "../images/default-media.png"
-                scale: GridView.isCurrentItem ? 1.5 : 1.0
+                scale: GridView.isCurrentItem ? 1.2 : 1.0
                 z: GridView.isCurrentItem ? 2 : 1
                 smooth: true
                 transformOrigin: {
@@ -188,6 +188,14 @@ FocusScope {
                     smooth: true
                     source: "../images/folder-video.png"
                     visible: !model.isLeaf && !model.isDotDot
+                }
+
+                GridView.onAdd: NumberAnimation {
+                    target: delegate
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                    duration: 500
                 }
             }
         }

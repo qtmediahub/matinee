@@ -204,12 +204,13 @@ FocusScope {
                 Keys.onDownPressed: moveCurrentIndexDown()
 
                 delegate: Item {
-
+                    id: albumDelegate
                     property string album: model.album ? model.album : ""
 
                     width: GridView.view.cellWidth
                     height: GridView.view.cellHeight
                     opacity: GridView.isCurrentItem ? 1 : 0.5
+                    transformOrigin: Item.Left
 
                     Image {
                         id: delegateAlbumIcon
@@ -230,6 +231,18 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         text: model.dotdot ? "back" : trackModel.part == "album" ? model.album : (model.track ? model.track : "") + " " + model.title
                     }
+
+                    NumberAnimation {
+                        id: delegateAnimation
+                        target: albumDelegate
+                        property: "scale"
+                        from: 0
+                        to: 1
+                        duration: 500
+                        easing.type: Easing.OutBack
+                    }
+
+                    Component.onCompleted: delegateAnimation.restart()
                 }
             }
         }
