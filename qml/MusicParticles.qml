@@ -42,16 +42,11 @@ import QtQuick 2.0
 import QtQuick.Particles 2.0
 
 Rectangle {
-
     id: root
 
-    height: 540
-    width: 360
-
-    gradient: Gradient {
-        GradientStop { position: 0; color: "#000020" }
-        GradientStop { position: 1; color: "#000000" }
-    }
+    height: 1280
+    width: 720
+    color: "black"
 
     ParticleSystem { id: sys2 }
     ImageParticle {
