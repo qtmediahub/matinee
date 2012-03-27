@@ -27,6 +27,13 @@ FocusScope {
 
     signal back()
 
+    function updateContextContent() {
+        if (state == "active")
+            runtime.contextContent.newContextContent("matinee", "picture.qml", pictureModel.getIdList())
+        else
+            runtime.contextContent.invalidateContextContent()
+    }
+
     property int currentIndex: 0
 
     states: State {
@@ -34,11 +41,15 @@ FocusScope {
         PropertyChanges { target: root; opacity: 1 }
     }
 
+
     transitions: [
         Transition {
+            ScriptAction { script: updateContextContent() }
             NumberAnimation { property: "opacity"; duration: 2000 }
         }
     ]
+
+
 
     MediaModel {
         id: pictureModel
