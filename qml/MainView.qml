@@ -139,6 +139,7 @@ FocusScope {
             height: parent.height/1.5
             width: parent.width
             mediaType: mainMenu.mediaType
+            visible: !matinee.mediaPlayer.active
         }
 
         Emitter {

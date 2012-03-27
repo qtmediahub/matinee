@@ -40,6 +40,10 @@ QMHPlayer {
         root.play(mediaModel, row)
     }
 
+    function playBackground(mediaModel, row) {
+        root.play(mediaModel, row)
+    }
+
     anchors.fill: parent
 
     Keys.onUpPressed: playPrevious();
@@ -64,8 +68,12 @@ QMHPlayer {
         }
     }
 
+    MusicParticles {
+        anchors.fill: parent
+        visible: root.active && !root.hasVideo
+    }
+
     onStatusChanged: {
-        print("status change: "+status)
         if (status == AbstractMediaPlayer.EndOfMedia)
             playNext();
     }

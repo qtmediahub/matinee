@@ -59,12 +59,13 @@ FocusScope {
     MediaModel {
         id: trackModel
         mediaType: "music"
-        structure: "album|title"
+        structure: "album|track,title"
+        dotDotPosition: MediaModel.Nowhere
     }
 
     Image {
         anchors.fill: parent
-        source: "../images/stripes.png"
+        source: "../images/air.jpg"
         cache: false
         sourceSize.width: parent.width
         opacity: matinee.mediaPlayer.active ? 0 : 1
@@ -79,96 +80,158 @@ FocusScope {
         model: musicModel
         focus: true
 
-        onCurrentIndexChanged: {
+        Keys.onEnterPressed: {
             trackModel.sqlCondition = "\"artist\" = \"" + listView.currentItem.artist + "\""
+            listView.currentItem.active = true;
+            listView.currentItem.albumGridView.focus = true;
+        }
+
+        Keys.onMenuPressed: {
+            if (listView.currentItem.active) {
+                listView.currentItem.active = false;
+                listView.currentItem.albumGridView.focus = false;
+                listView.focus = true;
+            } else {
+                root.back();
+            }
+        }
+
+        Keys.onContext1Pressed: {
+            print("play artist")
         }
 
         delegate: Rectangle {
             id: delegate
 
             property string artist: model.artist
+            property bool active: false
+            property alias albumGridView: albumGridView
 
             width: listView.width
-            height: (ListView.isCurrentItem ? delegateListView.height : 0) + cover.height
+            height: albumGridView.height + cover.height + cover.anchors.margins*2
             clip: true
-            opacity: ListView.isCurrentItem ? 1 : 0.6
-            gradient: Gradient {
-                GradientStop { position: 0; color: index % 2 ? "#aa000000" : "#aa1A6289" }
-                GradientStop { position: 0.2; color: index % 2 ? "#bb000000" : "#bb1A6289" }
-                GradientStop { position: 1; color: "#00000000" }
-            }
+            opacity: ListView.isCurrentItem ? 1 : 0.4
+            color: ListView.isCurrentItem ? "#44000000" : "#00000000"
+            state: active ? "active" : ""
 
+            Behavior on color { ColorAnimation {} }
+            Behavior on opacity { NumberAnimation {} }
+            Behavior on height { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
 
-            Behavior on height {
-                NumberAnimation { easing.type: Easing.OutBack; duration: 500 }
-            }
+            states : [
+                State {
+                    name: "active"
+                    AnchorChanges { target: artistText; anchors.top: cover.top; anchors.verticalCenter: undefined }
+                    PropertyChanges { target: albumText; opacity: 0.5 }
+                }
+            ]
 
-            Row {
-                id: delegateRow
+            transitions: [
+                Transition {
+                    AnchorAnimation { }
+                    NumberAnimation { }
+                }
+            ]
+
+            Image {
+                id: cover
+                width: 64
+                height: width
                 anchors.top: parent.top
-                height: cover.height
-                width: parent.width
-
-                Image {
-                    id: cover
-                    width: 128
-                    height: width
-                    source: model.thumbnail
-                    smooth: true
-                }
-
-                Text {
-                    id: artist
-                    text: model.artist
-                    color: "white"
-                    elide: Text.ElideRight
-                    font.pixelSize: 32
-                }
+                anchors.left: parent.left
+                anchors.margins: 10
+                source: model.previewUrl != "" ? model.previewUrl : "../images/default-media.png"
+                smooth: true
             }
 
-            ListView {
-                id: delegateListView
-                anchors.top: delegateRow.bottom
+            MatineeMediumText {
+                id: artistText
+                anchors.verticalCenter: cover.verticalCenter
+                anchors.left: cover.right
+                anchors.leftMargin: 10
+                text: model.artist
+            }
+
+            MatineeMediumText {
+                id: albumText
+                anchors.top: artistText.bottom
+                anchors.left: cover.right
+                anchors.leftMargin: 10
+                opacity: 0
+                text: trackModel.part != "album" && albumGridView.currentItem ? albumGridView.currentItem.album : albumGridView.count + " albums by this artist"
+            }
+
+            GridView {
+                id: albumGridView
+                anchors.top: cover.bottom
                 x: 150
-                width: parent.width
-                height: count * 64
+                width: parent.width - albumGridView.x
+                height: delegate.active ? Math.ceil(count/2.0) * cellHeight : 0
                 model: trackModel
                 clip: true
-                opacity: delegate.ListView.isCurrentItem ? 1 : 0
+                opacity: delegate.active ? 1 : 0
+                cellWidth: width/2.0
+                cellHeight: trackModel.part == "album" ? 64 : 32
+                keyNavigationWraps: true
+                flow: GridView.TopToBottom
 
                 Behavior on opacity { NumberAnimation { duration: 800 } }
 
+                Keys.onEnterPressed: {
+                    if (trackModel.part == "album") {
+                        trackModel.enter(albumGridView.currentIndex)
+                        albumGridView.currentIndex = 0
+                    } else {
+                        matinee.mediaPlayer.playBackground(trackModel, albumGridView.currentIndex)
+                    }
+                }
+
+                Keys.onMenuPressed: {
+                    if (trackModel.part != "album") {
+                        trackModel.back()
+                        albumGridView.currentIndex = 0
+                    } else {
+                        event.accepted = false
+                    }
+                }
+
+                Keys.onContext1Pressed: {
+                    print("play album by context key "+albumGridView.currentIndex)
+                }
+
+                // we need to explicitly handle them
+                Keys.onUpPressed: moveCurrentIndexUp()
+                Keys.onDownPressed: moveCurrentIndexDown()
+
                 delegate: Item {
-                    width: parent.width
-                    height: 64
-                    opacity: model.dotdot ? 0 : 1
+
+                    property string album: model.album ? model.album : ""
+
+                    width: GridView.view.cellWidth
+                    height: GridView.view.cellHeight
+                    opacity: GridView.isCurrentItem ? 1 : 0.5
 
                     Image {
                         id: delegateAlbumIcon
-                        source: model.previewUrl
-                        width: 64
-                        height: width
+                        source: (model.dotdot || model.previewUrl == "") ? "../images/default-media.png" : model.previewUrl
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.margins: 5
+                        width: height
+                        height: parent.height-5
                         smooth: true
+                        visible: trackModel.part == "album"
                     }
 
-                    Text {
+                    MatineeMediumText {
+                        width: parent.width - anchors.leftMargin - delegateAlbumIcon.width
                         anchors.left: delegateAlbumIcon.right
                         anchors.leftMargin: 20
-                        anchors.verticalCenter: delegateAlbumIcon.verticalCenter
-    //                    text: (model.track ? model.track + " - " : "") + (model.title ? model.title : "unknown")
-                        text: model.album
-                        color: "white"
-                        font.pixelSize: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: model.dotdot ? "back" : trackModel.part == "album" ? model.album : (model.track ? model.track : "") + " " + model.title
                     }
                 }
             }
         }
-    }
-
-    Keys.onMenuPressed: {
-        root.back()
-    }
-    Keys.onEnterPressed: {
-        matinee.mediaPlayer.playForeground(trackModel, 1)
     }
 }

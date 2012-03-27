@@ -90,9 +90,7 @@ FocusScope {
                 matinee.showView(pictureView);
             } else if (type === "video") {
                 matinee.showView(videoView);
-            }/* else if (type === "radio") {
-                    matinee.showView(radioView);
-                }*/
+            }
         }
     }
 
@@ -102,10 +100,10 @@ FocusScope {
         onBack: matinee.showView(mainView)
     }
 
-    RadioView {
-        id: radioView
-        anchors.fill: parent
-        onBack: matinee.showView(mainView)
+    VolumeOSD {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 20
     }
 
     Component.onCompleted: {
@@ -113,5 +111,8 @@ FocusScope {
         //        runtime.mediaScanner.addSearchPath("video", "/home/jzellner/minimal_media/video/", "video");
         //        runtime.mediaScanner.addSearchPath("picture", "/home/jzellner/minimal_media/picture/", "picture");
     }
+
+    Keys.onVolumeUpPressed: mediaPlayer.increaseVolume();
+    Keys.onVolumeDownPressed: mediaPlayer.decreaseVolume();
 }
 
