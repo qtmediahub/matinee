@@ -60,7 +60,7 @@ FocusScope {
         id: trackModel
         mediaType: "music"
         structure: "album|track,title"
-        dotDotPosition: MediaModel.End
+        dotDotPosition: MediaModel.Nowhere
     }
 
     Image {
