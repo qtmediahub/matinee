@@ -32,7 +32,7 @@ FocusScope {
         ListElement { name: "Music"; icon: "../images/folder-music.png"; mediaType: "music" }
         ListElement { name: "Picture"; icon: "../images/folder-image.png"; mediaType: "picture" }
         ListElement { name: "Video"; icon: "../images/folder-video.png"; mediaType: "video" }
-        ListElement { name: "Radio"; icon: "../images/folder-radio.png"; mediaType: "radio" }
+        ListElement { name: "Settings"; icon: "../images/preferences-system.png"; mediaType: "" }
     }
 
 
