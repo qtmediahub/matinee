@@ -114,5 +114,20 @@ FocusScope {
 
     Keys.onVolumeUpPressed: mediaPlayer.increaseVolume();
     Keys.onVolumeDownPressed: mediaPlayer.decreaseVolume();
+
+    Keys.onPressed: {
+        event.accepted = true
+        if (event.key == Qt.Key_MediaTogglePlayPause) {
+            mediaPlayer.togglePlayPause()
+        } else if (event.key == Qt.Key_MediaStop) {
+            mediaPlayer.stop()
+        } else if (event.key == Qt.Key_MediaPrevious) {
+            mediaPlayer.playPrevious()
+        } else if (event.key == Qt.Key_MediaNext) {
+            mediaPlayer.playNext()
+        } else {
+            event.accepted = false
+        }
+    }
 }
 
