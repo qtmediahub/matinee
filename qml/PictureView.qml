@@ -274,6 +274,17 @@ FocusScope {
     //        color: "white"
     //    }
 
+    Connections {
+        target: runtime.contextContent
+        onItemSelectedById: {
+            if (slideShow.state === "") {
+                slideShow.state = "active"
+            }
+            slideShowListView.currentIndex = pictureModel.indexById(id)
+        }
+    }
+
+
     Keys.onMenuPressed: root.back()
     Keys.onEnterPressed: {
         if (slideShow.state === "") {
