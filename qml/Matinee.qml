@@ -53,8 +53,8 @@ FocusScope {
             matinee.activeView.state = "musicInactive"
             matinee.activeView = view
             matinee.activeView.state = "active"
-        } else if (view === radioView) {
-            matinee.activeView.state = "pictureInactive"
+        } else if (view === settingsView) {
+            matinee.activeView.state = "settingsInactive"
             matinee.activeView = view
             matinee.activeView.state = "active"
         }
@@ -90,12 +90,20 @@ FocusScope {
                 matinee.showView(pictureView);
             } else if (type === "video") {
                 matinee.showView(videoView);
+            } else if (type === "settings") {
+                matinee.showView(settingsView);
             }
         }
     }
 
     MusicView {
         id: musicView
+        anchors.fill: parent
+        onBack: matinee.showView(mainView)
+    }
+
+    SettingsView {
+        id: settingsView
         anchors.fill: parent
         onBack: matinee.showView(mainView)
     }

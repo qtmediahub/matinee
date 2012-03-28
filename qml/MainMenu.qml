@@ -23,16 +23,16 @@ FocusScope {
     width: 800
     height: 480
 
-    property string mediaType: mainMenuModel.get(pathView.currentIndex).mediaType
+    property string mediaType: mainMenuModel.get(pathView.currentIndex).type
     signal activateView(var type)
 
     ListModel {
         id: mainMenuModel
 
-        ListElement { name: "Music"; icon: "../images/folder-music.png"; mediaType: "music" }
-        ListElement { name: "Picture"; icon: "../images/folder-image.png"; mediaType: "picture" }
-        ListElement { name: "Video"; icon: "../images/folder-video.png"; mediaType: "video" }
-        ListElement { name: "Settings"; icon: "../images/preferences-system.png"; mediaType: "" }
+        ListElement { name: "Music"; icon: "../images/folder-music.png"; type: "music" }
+        ListElement { name: "Picture"; icon: "../images/folder-image.png"; type: "picture" }
+        ListElement { name: "Video"; icon: "../images/folder-video.png"; type: "video" }
+        ListElement { name: "Settings"; icon: "../images/preferences-system.png"; type: "settings" }
     }
 
 
@@ -106,7 +106,7 @@ FocusScope {
 
         Keys.onRightPressed: pathView.incrementCurrentIndex();
         Keys.onLeftPressed: pathView.decrementCurrentIndex();
-        Keys.onEnterPressed: root.activateView(mainMenuModel.get(pathView.currentIndex).mediaType);
+        Keys.onEnterPressed: root.activateView(mainMenuModel.get(pathView.currentIndex).type);
         Keys.onMenuPressed: {
             if (matinee.mediaPlayer.active)
                 matinee.mediaPlayer.showForeground()
