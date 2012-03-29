@@ -29,7 +29,7 @@ FocusScope {
 
     function updateContextContent() {
         if (state == "active")
-            runtime.contextContent.newContextContent("matinee", "picture.qml", pictureModel.getIdList())
+            runtime.contextContent.newContextContent("matinee", "Picture.qml", pictureModel.getIdList())
         else
             runtime.contextContent.invalidateContextContent()
     }
