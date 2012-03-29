@@ -41,13 +41,11 @@ GridView {
                 easing.type: Easing.OutElastic
                 duration: 1000
             }
-        }
 
-
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: itemSelected(modelData)
+            MouseArea {
+                anchors.fill: parent
+                onClicked: if(image.status == Image.Ready) itemSelected(modelData)
+            }
         }
 
         BusyIndicator {
