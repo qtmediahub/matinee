@@ -54,7 +54,7 @@ FocusScope {
     MediaModel {
         id: pictureModel
         mediaType: "picture"
-        structure: "fileName"
+        structure: "year|month|fileName"
     }
 
     Image {
@@ -99,6 +99,8 @@ FocusScope {
             delegate: Item {
                 id: delegate
 
+                property bool isLeaf: model.isLeaf
+
                 width: GridView.view.cellWidth
                 height: GridView.view.cellHeight
                 opacity: GridView.isCurrentItem ? 1 : 0.5
@@ -118,7 +120,7 @@ FocusScope {
 
                 Image {
                     source: {
-                        if (model.dotdot) return ""
+                        if (model.dotdot) return "../images/folder-grey.png"
                         else if (model.previewUrl == "" ) return "../images/default-media.png"
                         else return model.previewUrl
                     }
@@ -127,6 +129,14 @@ FocusScope {
                     anchors.centerIn: parent
                     fillMode: Image.PreserveAspectFit
                     smooth: true
+                }
+
+                GridView.onAdd: NumberAnimation {
+                    target: delegate
+                    property: "scale"
+                    from: 0
+                    to: 1
+                    easing.type: Easing.OutBack
                 }
             }
         }
@@ -239,7 +249,7 @@ FocusScope {
                     sourceSize.width: imageThumbnail.width > imageThumbnail.height ? parent.width : 0
                     sourceSize.height: imageThumbnail.width <= imageThumbnail.height ? parent.height : 0
                     anchors.fill: parent
-                    source: model.filepath
+                    source: model.filepath ? model.filepath : ""
                     asynchronous: true
                 }
                 Image {
@@ -247,7 +257,7 @@ FocusScope {
                     anchors.fill: image
                     fillMode: Image.PreserveAspectFit
                     visible: image.status != Image.Ready
-                    source: model.previewUrl
+                    source: model.previewUrl ? model.previewUrl : ""
                 }
 
                 Behavior on rotation { NumberAnimation { easing.type: Easing.OutBack; duration: 500 } }
@@ -260,19 +270,6 @@ FocusScope {
             Keys.onMenuPressed: slideShow.state = ""
         }
     }
-
-    //    PictureViewViewport {
-    //        id: viewport
-    //        anchors.fill: parent
-    //    }
-
-    //    Text {
-    //        anchors.top: parent.top
-    //        anchors.horizontalCenter: parent.horizontalCenter
-    //        text: pictureModel.get(viewport.currentIndex).artist
-    //        font.pixelSize: 40
-    //        color: "white"
-    //    }
 
     Connections {
         target: runtime.contextContent
@@ -287,15 +284,16 @@ FocusScope {
 
     Keys.onMenuPressed: root.back()
     Keys.onEnterPressed: {
-        if (slideShow.state === "") {
-            slideShowListView.highlightMoveDuration = 0
-            slideShowListView.currentIndex = pictureGrid.currentIndex
-            slideShowListView.highlightMoveDuration = 500
-            slideShow.state = "active"
+        if (pictureGrid.currentItem.isLeaf) {
+            if (slideShow.state === "") {
+                slideShowListView.highlightMoveDuration = 0
+                slideShowListView.currentIndex = pictureGrid.currentIndex
+                slideShowListView.highlightMoveDuration = 500
+                slideShow.state = "active"
+            }
+        } else {
+            pictureModel.enter(pictureGrid.currentIndex)
+            pictureGrid.currentIndex = 0
         }
     }
-
-    //    Keys.onEnterPressed: viewport.showCurrentItem()
-    //    Keys.onRightPressed: viewport.decrementCurrentIndex()
-    //    Keys.onLeftPressed: viewport.incrementCurrentIndex()
 }
