@@ -26,18 +26,35 @@ FocusScope {
     opacity: 0
 
     signal back()
+    signal rowsInserted()
 
     function selectById(id) {
-        if (slideShow.state === "") {
-            slideShow.state = "active"
-        }
-        slideShowListView.currentIndex = pictureModel.indexById(id)
+        pictureGrid.currentIndex = pictureModel.indexById(id)
+        enter()
     }
 
     function getModelIdList() {
         return pictureModel.getIdList()
     }
 
+    function enter() {
+        if (pictureGrid.currentItem.isLeaf) {
+            if (slideShow.state === "") {
+                slideShowListView.highlightMoveDuration = 0
+                slideShowListView.currentIndex = pictureGrid.currentIndex
+                slideShowListView.highlightMoveDuration = 500
+                slideShow.state = "active"
+            }
+            else {
+                slideShowListView.currentIndex = pictureGrid.currentIndex
+            }
+        }
+        else {
+            slideShow.state = ""
+            pictureModel.enter(pictureGrid.currentIndex)
+            pictureGrid.currentIndex = 0
+        }
+    }
 
 
     property int currentIndex: 0
@@ -60,6 +77,7 @@ FocusScope {
         id: pictureModel
         mediaType: "picture"
         structure: "year|month|fileName"
+        onRowsInserted: root.rowsInserted()
     }
 
     Image {
@@ -277,17 +295,5 @@ FocusScope {
     }
 
     Keys.onMenuPressed: root.back()
-    Keys.onEnterPressed: {
-        if (pictureGrid.currentItem.isLeaf) {
-            if (slideShow.state === "") {
-                slideShowListView.highlightMoveDuration = 0
-                slideShowListView.currentIndex = pictureGrid.currentIndex
-                slideShowListView.highlightMoveDuration = 500
-                slideShow.state = "active"
-            }
-        } else {
-            pictureModel.enter(pictureGrid.currentIndex)
-            pictureGrid.currentIndex = 0
-        }
-    }
+    Keys.onEnterPressed: root.enter()
 }

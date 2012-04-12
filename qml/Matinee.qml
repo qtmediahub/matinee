@@ -68,7 +68,7 @@ FocusScope {
 
     Connections {
         target: runtime.contextContent
-        onItemSelectedById: { matinee.activeView.selectById(id); }
+        onItemSelectedById: matinee.activeView.selectById(id);
     }
 
     MediaPlayerContainer {
@@ -80,6 +80,7 @@ FocusScope {
         id: pictureView
         anchors.fill: parent
         onBack: matinee.showView(mainView)
+        onRowsInserted: runtime.contextContent.newContextContent("matinee", "Picture.qml", pictureView.getModelIdList())
     }
 
     VideoView {
