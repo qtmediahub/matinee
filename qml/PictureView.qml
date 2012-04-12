@@ -57,8 +57,6 @@ FocusScope {
     }
 
 
-    property int currentIndex: 0
-
     states: State {
         name: "active"
         PropertyChanges { target: root; opacity: 1 }
