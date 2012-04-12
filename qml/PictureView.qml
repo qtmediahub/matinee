@@ -27,12 +27,18 @@ FocusScope {
 
     signal back()
 
-    function updateContextContent() {
-        if (state == "active")
-            runtime.contextContent.newContextContent("matinee", "Picture.qml", pictureModel.getIdList())
-        else
-            runtime.contextContent.invalidateContextContent()
+    function selectById(id) {
+        if (slideShow.state === "") {
+            slideShow.state = "active"
+        }
+        slideShowListView.currentIndex = pictureModel.indexById(id)
     }
+
+    function getModelIdList() {
+        return pictureModel.getIdList()
+    }
+
+
 
     property int currentIndex: 0
 
@@ -44,7 +50,6 @@ FocusScope {
 
     transitions: [
         Transition {
-            ScriptAction { script: updateContextContent() }
             NumberAnimation { property: "opacity"; duration: 2000 }
         }
     ]
@@ -270,17 +275,6 @@ FocusScope {
             Keys.onMenuPressed: slideShow.state = ""
         }
     }
-
-    Connections {
-        target: runtime.contextContent
-        onItemSelectedById: {
-            if (slideShow.state === "") {
-                slideShow.state = "active"
-            }
-            slideShowListView.currentIndex = pictureModel.indexById(id)
-        }
-    }
-
 
     Keys.onMenuPressed: root.back()
     Keys.onEnterPressed: {

@@ -26,11 +26,16 @@ GridView {
 
             fillMode: Image.PreserveAspectFit
 
-            source: "http://" + view.peerName + ":1337/picture/thumbnail/" + modelData
+            source: modelData > 0 ? "http://" + view.peerName + ":1337/video/thumbnail/" + modelData : ""
+
+
 
             onStatusChanged: {
                 if(image.status == Image.Ready)
                     inAnimation.start()
+                else if(image.status == Image.Error) {
+
+                }
             }
             NumberAnimation {
                 id: inAnimation

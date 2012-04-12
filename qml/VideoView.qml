@@ -28,6 +28,26 @@ FocusScope {
     property alias mediaModel: videoModel
 
     signal back()
+    signal rowsInserted()
+
+    function enter() {
+        if (gridView.currentItem.isLeaf)
+            matinee.mediaPlayer.playForeground(videoModel, gridView.currentIndex+1)
+        else {
+            videoModel.enter(gridView.currentIndex)
+            gridView.currentIndex = 0
+        }
+    }
+
+    function selectById(id) {
+        gridView.currentIndex = videoModel.indexById(id)
+        enter();
+    }
+
+    function getModelIdList() {
+        return videoModel.getIdList()
+    }
+
 
     states: State {
         name: "active"
@@ -44,6 +64,7 @@ FocusScope {
         id: videoModel
         mediaType: "video"
         structure: "show|season|title"
+        onRowsInserted: root.rowsInserted()
     }
 
     ShaderEffectSource {
@@ -217,12 +238,5 @@ FocusScope {
     Keys.onRightPressed: gridView.moveCurrentIndexRight()
     Keys.onUpPressed: gridView.moveCurrentIndexUp()
     Keys.onDownPressed: gridView.moveCurrentIndexDown()
-    Keys.onEnterPressed: {
-        if (gridView.currentItem.isLeaf)
-            matinee.mediaPlayer.playForeground(videoModel, gridView.currentIndex+1)
-        else {
-            videoModel.enter(gridView.currentIndex)
-            gridView.currentIndex = 0
-        }
-    }
+    Keys.onEnterPressed: enter()
 }

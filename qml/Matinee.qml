@@ -37,6 +37,8 @@ FocusScope {
     }
 
     function showView(view) {
+        runtime.contextContent.invalidateContextContent()
+
         if (view == mainView) {
             matinee.activeView.state = ""
             matinee.activeView = view
@@ -45,10 +47,12 @@ FocusScope {
             matinee.activeView.state = "videoInactive"
             matinee.activeView = view
             matinee.activeView.state = "active"
+            runtime.contextContent.newContextContent("matinee", "Video.qml", videoView.getModelIdList())
         } else if (view === pictureView) {
             matinee.activeView.state = "pictureInactive"
             matinee.activeView = view
             matinee.activeView.state = "active"
+            runtime.contextContent.newContextContent("matinee", "Picture.qml", pictureView.getModelIdList())
         } else if (view === musicView) {
             matinee.activeView.state = "musicInactive"
             matinee.activeView = view
@@ -60,6 +64,11 @@ FocusScope {
         }
 
         matinee.activeView.forceActiveFocus()
+    }
+
+    Connections {
+        target: runtime.contextContent
+        onItemSelectedById: { matinee.activeView.selectById(id); }
     }
 
     MediaPlayerContainer {
@@ -77,6 +86,7 @@ FocusScope {
         id: videoView
         anchors.fill: parent
         onBack: matinee.showView(mainView)
+        onRowsInserted: runtime.contextContent.newContextContent("matinee", "Video.qml", videoView.getModelIdList())
     }
 
     MainView {
