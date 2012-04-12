@@ -33,6 +33,7 @@ GridView {
                 if(image.status == Image.Ready)
                     inAnimation.start()
             }
+
             NumberAnimation {
                 id: inAnimation
                 target: image;
@@ -55,7 +56,6 @@ GridView {
             text: "?"
             font.pixelSize: delegate.height
             visible: image.status == Image.Error
-
         }
 
         MouseArea {

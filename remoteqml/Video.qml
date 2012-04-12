@@ -13,6 +13,7 @@ GridView {
     // model to be set by Loader!
 
     delegate: Item {
+        id: delegate
         width: GridView.view.cellWidth
         height: GridView.view.cellHeight
 
@@ -28,15 +29,11 @@ GridView {
 
             source: modelData > 0 ? "http://" + view.peerName + ":1337/video/thumbnail/" + modelData : ""
 
-
-
             onStatusChanged: {
                 if(image.status == Image.Ready)
                     inAnimation.start()
-                else if(image.status == Image.Error) {
-
-                }
             }
+
             NumberAnimation {
                 id: inAnimation
                 target: image;
@@ -57,9 +54,8 @@ GridView {
         Text {
             anchors.centerIn: parent
             text: "?"
-            font.pixelSize: GridView.view.cellHeight
-            visible: modelData == 0
-
+            font.pixelSize: delegate.height
+            visible: image.status == Image.Error
         }
 
         MouseArea {
@@ -70,8 +66,8 @@ GridView {
         BusyIndicator {
             id: placeHolder
             platformStyle: BusyIndicatorStyle { size: "large" }
-            running: image.status != Image.Ready
-            visible: image.status != Image.Ready
+            running: image.status == Image.Loading
+            visible: image.status == Image.Loading
             anchors.centerIn: parent
         }
     }
