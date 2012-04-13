@@ -67,8 +67,8 @@ GridView {
         BusyIndicator {
             id: placeHolder
             platformStyle: BusyIndicatorStyle { size: "large" }
-            running: image.status == Image.Loading
-            visible: image.status == Image.Loading
+            running: image.status == Image.Loading && modelData != -1
+            visible: image.status == Image.Loading && modelData != -1
             anchors.centerIn: parent
         }
     }
